@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import entities.LibraryMember;
+import entities.Book;
 import models.LoginException;
 import models.ResponseModel;
 
