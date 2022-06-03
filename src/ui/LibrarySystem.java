@@ -28,7 +28,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	JPanel mainPanel;
 	JMenuBar menuBar;
     JMenu options;
-    JMenuItem login, allBookIds, allMemberIds; 
+    JMenuItem logout, allBookIds, allMemberIds;
     String pathToImage;
     private boolean isInitialized = false;
     
@@ -45,8 +45,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			frame.setVisible(false);
 		}
 	}
-    
-    
+
     private LibrarySystem() {}
     
     public void init() {
@@ -56,7 +55,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		
 		createMenus();
 		//pack();
-		setSize(GuiControl.SCREEN_WIDTH,GuiControl.SCREEN_HEIGHT);
+		setSize(GuiControl.SCREEN_WIDTH, GuiControl.SCREEN_HEIGHT);
 		isInitialized = true;
     }
     
@@ -85,13 +84,17 @@ public class LibrarySystem extends JFrame implements LibWindow {
     private void addMenuItems() {
        options = new JMenu("Options");  
  	   menuBar.add(options);
- 	   login = new JMenuItem("Login");
- 	   login.addActionListener(new LoginListener());
+ 	   logout = new JMenuItem("Logout");
+ 	   //login.addActionListener(new LoginListener());
+		logout.addActionListener(evt -> {
+			ci.logout();
+
+		});
  	   allBookIds = new JMenuItem("All Book Ids");
  	   allBookIds.addActionListener(new AllBookIdsListener());
- 	   allMemberIds = new JMenuItem("All Member Ids");
+ 	   allMemberIds = new JMenuItem("Member");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
- 	   options.add(login);
+ 	   options.add(logout);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
     }

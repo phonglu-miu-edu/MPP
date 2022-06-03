@@ -19,7 +19,7 @@ public class Main {
 				if(SystemController.currentAuth == null) {
 					Util.showLoginForm();
 				} else {
-					Util.showMainScreen();
+					Util.showMainScreen(SystemController.currentAuth);
 				}
 	         });
 	}

@@ -149,11 +149,9 @@ public class LoginWindow extends JFrame implements LibWindow {
 				String password = new String(pwdChars).trim();
 
 				User loginedUser = ci.login(username, password);
-				System.out.println(SystemController.currentAuth);
-				System.out.println(loginedUser.getId());
 				setVisible(false);
 				//changeScreen with auth
-				Util.showMainScreen();
+				Util.showMainScreen(loginedUser.getAuthorization());
 			} catch(LoginException ex) {
 				System.out.println(ex.getMessage());
 			}
