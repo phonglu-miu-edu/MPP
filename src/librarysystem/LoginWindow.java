@@ -44,9 +44,6 @@ public class LoginWindow extends JFrame implements LibWindow {
 	private JButton loginButton;
 	private JButton logoutButton;
 	
-	
-	
-	
 	public boolean isInitialized() {
 		return isInitialized;
 	}
@@ -77,8 +74,6 @@ public class LoginWindow extends JFrame implements LibWindow {
     		isInitialized(true);
     		pack();
     		//setSize(660, 500);
-
-    	
     }
     private void defineUpperHalf() {
     		
@@ -122,8 +117,6 @@ public class LoginWindow extends JFrame implements LibWindow {
     		topPanel.add(intPanel);
     		
     	}
-    	
-    	
     	
     	private void defineMiddlePanel() {
     		middlePanel=new JPanel();
@@ -190,7 +183,5 @@ public class LoginWindow extends JFrame implements LibWindow {
     				
     		});
     	}
-	
-        
-    
+
 }

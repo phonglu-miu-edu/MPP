@@ -1362,6 +1362,24 @@
 											"height": 13,
 											"text": "+Attribute3",
 											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGBJ2mopGgvH10=",
+											"_parent": {
+												"$ref": "AAAAAAGBJej/ZWTZtek="
+											},
+											"model": {
+												"$ref": "AAAAAAGBJ2mojmgsLzs="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"left": 85,
+											"top": 580,
+											"width": 67.1962890625,
+											"height": 13,
+											"text": "-id: String",
+											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
@@ -5403,6 +5421,16 @@
 							},
 							"name": "Attribute3",
 							"type": ""
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAGBJ2mojmgsLzs=",
+							"_parent": {
+								"$ref": "AAAAAAGBJej/ZGTRlBE="
+							},
+							"name": "id",
+							"visibility": "private",
+							"type": "String"
 						}
 					]
 				},

@@ -16,13 +16,13 @@ import dataaccess.DataAccessFacade.StorageType;
 
 
 public class DataAccessFacade implements DataAccess {
-	
+	private final static String SEPERATOR = FileSystems.getDefault().getSeparator();
 	enum StorageType {
 		BOOKS, MEMBERS, USERS;
 	}
 	
 	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
-			+ "\\src\\dataaccess\\storage";
+			+ SEPERATOR + "src" + SEPERATOR + "dataaccess" + SEPERATOR + "storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations

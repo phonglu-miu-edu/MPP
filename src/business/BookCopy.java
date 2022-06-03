@@ -43,7 +43,7 @@ final public class BookCopy implements Serializable {
 	public boolean equals(Object ob) {
 		if(ob == null) return false;
 		if(!(ob instanceof BookCopy)) return false;
-		BookCopy copy = (BookCopy)ob;
+		BookCopy copy = (BookCopy) ob;
 		return copy.book.getIsbn().equals(book.getIsbn()) && copy.copyNum == copyNum;
 	}
 	

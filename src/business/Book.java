@@ -13,17 +13,19 @@ import java.util.Optional;
 final public class Book implements Serializable {
 	
 	private static final long serialVersionUID = 6110690276685962829L;
+	private String id;
 	private BookCopy[] copies;
 	private List<Author> authors;
 	private String isbn;
 	private String title;
 	private int maxCheckoutLength;
-	public Book(String isbn, String title, int maxCheckoutLength, List<Author> authors) {
+	public Book(String id, String isbn, String title, int maxCheckoutLength, List<Author> authors) {
+		this.id = id;
 		this.isbn = isbn;
 		this.title = title;
 		this.maxCheckoutLength = maxCheckoutLength;
 		this.authors = Collections.unmodifiableList(authors);
-		copies = new BookCopy[]{new BookCopy(this, 1, true)};	
+		addCopy();
 	}
 	
 	public void updateCopies(BookCopy copy) {
@@ -31,7 +33,6 @@ final public class Book implements Serializable {
 			BookCopy c = copies[i];
 			if(c.equals(copy)) {
 				copies[i] = copy;
-				
 			}
 		}
 	}
@@ -46,18 +47,20 @@ final public class Book implements Serializable {
 	}
 	
 	public void addCopy() {
-		BookCopy[] newArr = new BookCopy[copies.length + 1];
-		System.arraycopy(copies, 0, newArr, 0, copies.length);
-		newArr[copies.length] = new BookCopy(this, copies.length +1, true);
-		copies = newArr;
+		if(this.copies != null) {
+			BookCopy[] newArr = new BookCopy[copies.length + 1];
+			System.arraycopy(copies, 0, newArr, 0, copies.length);
+			newArr[copies.length] = new BookCopy(this, copies.length +1, true);
+			copies = newArr;
+		}
 	}
-	
+
 	
 	@Override
 	public boolean equals(Object ob) {
 		if(ob == null) return false;
 		if(ob.getClass() != getClass()) return false;
-		Book b = (Book)ob;
+		Book b = (Book) ob;
 		return b.isbn.equals(isbn);
 	}
 	
@@ -74,7 +77,8 @@ final public class Book implements Serializable {
 	public String toString() {
 		return "isbn: " + isbn + ", maxLength: " + maxCheckoutLength + ", available: " + isAvailable();
 	}
-	
+
+	public String getId() { return id; }
 	public int getNumCopies() {
 		return copies.length;
 	}
@@ -113,8 +117,4 @@ final public class Book implements Serializable {
 		return maxCheckoutLength;
 	}
 
-	
-	
-	
-	
 }
