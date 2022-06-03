@@ -1,8 +1,8 @@
 package models;
 
 public final class CheckoutModel {
-	private String isbnNumber;
-	private int checkoutDateLength;
+	private final String isbnNumber;
+	private final int checkoutDateLength;
 	
 	public CheckoutModel(String isbnNumber, int checkoutDateLength) {
 		this.isbnNumber = isbnNumber;

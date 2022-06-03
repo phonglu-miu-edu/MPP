@@ -22,8 +22,8 @@ import models.ResponseModel;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
-	private DataAccessFacade dataAccessFacade = new DataAccessFacade();
-	
+	private final DataAccessFacade dataAccessFacade = new DataAccessFacade();
+
 	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3
 	public static List<String> allWhoseZipContains3() {
 		DataAccess da = new DataAccessFacade();
