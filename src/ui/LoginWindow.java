@@ -20,10 +20,13 @@ import javax.swing.JTextField;
 import business.ControllerInterface;
 import business.SystemController;
 import dataaccess.User;
+import models.LoginException;
 
 public class LoginWindow extends JFrame implements LibWindow {
 	private static final long serialVersionUID = 3258408422029144633L;
 	private boolean isInitialized = false;
+
+	ControllerInterface ci = new SystemController();
 	private Window parent;
 	private final String MAIN_LABEL = "Library Management System";
 	private final String SUBMIT_BUTN = "Login";
@@ -34,6 +37,8 @@ public class LoginWindow extends JFrame implements LibWindow {
 
 	private JTextField userField;
 	private JPasswordField pwdField;
+
+	private JLabel messageBar;
 
 	//JPanels
 
@@ -103,7 +108,8 @@ public class LoginWindow extends JFrame implements LibWindow {
 	public void defineLowerPanel(){
 		//submit button
 		JButton submitButton = new JButton(SUBMIT_BUTN);
-		submitButton.addActionListener(new SubmitListener());
+		//submitButton.addActionListener(new SubmitListener());
+		this.addLoginButtonListener(submitButton);
 
 		//cancel button
 		//JButton cancelButton = new JButton(CANCEL_BUTN);
@@ -137,17 +143,24 @@ public class LoginWindow extends JFrame implements LibWindow {
 	}
 	private void addLoginButtonListener(JButton btn) {
 		btn.addActionListener(evt -> {
-			String username = this.userField.getText().trim();
-			char[] pwdChars = this.pwdField.getPassword();
-			String password = new String(pwdChars).trim();
-			User login;
-			List<User> list;
-			//if(username.length() == 0 || pwd)
+			try {
+				String username = this.userField.getText().trim();
+				char[] pwdChars = this.pwdField.getPassword();
+				String password = new String(pwdChars).trim();
+				System.out.println("call addLoginButtonListener");
+
+				ci.login(username, password);
+				System.out.println(SystemController.currentAuth);
+				//changeScreen with auth
+			} catch(LoginException ex) {
+				System.out.println(ex.getMessage());
+			}
 		});
 	}
-	class SubmitListener implements ActionListener {
+
+	/*class SubmitListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-			setVisible(false);
+			//setVisible(false);
 			String id = userField.getText();
 			char[] pwdAsChars = pwdField.getPassword();
 			String pwd = new String(pwdAsChars);
@@ -169,7 +182,7 @@ public class LoginWindow extends JFrame implements LibWindow {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-	}
+	}*/
 	class CancelListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			if(parent != null) {
