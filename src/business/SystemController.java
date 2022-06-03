@@ -122,7 +122,7 @@ public class SystemController implements ControllerInterface {
 		}
 		
 		for (CheckoutModel checkoutModel : checkoutModels) {
-			String isbnNumber = checkoutModel.getIsbnNumber();
+			String isbnNumber = checkoutModel.getIsbn();
 			int checkoutLength = checkoutModel.getCheckoutLength();
 			
 		Book book = getBook(isbnNumber);
