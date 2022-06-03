@@ -133,4 +133,15 @@ public class Util {
 			table.addColumn(column);
 		}
     }
+
+	public static void showMainScreen() {
+		LibrarySystem.INSTANCE.init();
+		Util.centerFrameOnDesktop(LibrarySystem.INSTANCE);
+		LibrarySystem.INSTANCE.setVisible(true);
+	}
+
+	public static void showLoginForm() {
+		LoginWindow loginForm = new LoginWindow();
+		loginForm.setVisible(true);
+	}
 }

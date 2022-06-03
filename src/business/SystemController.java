@@ -20,6 +20,7 @@ import entities.LibraryMember;
 import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
+import ui.Util;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
@@ -75,6 +76,7 @@ public class SystemController implements ControllerInterface {
 
 	public void logout() {
 		currentAuth = null;
+		Util.showLoginForm();
 	}
 	@Override
 	public List<String> allMemberIds() {

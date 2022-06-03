@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import ui.LoginWindow;
 import ui.Util;
+import business.SystemController;
 
 public class Main {
 	public static void main(String[] args) {
@@ -14,15 +15,13 @@ public class Main {
 	         {
 	            LibrarySystem.INSTANCE.setTitle("Library Management System");
 	            LibrarySystem.INSTANCE.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	            
-	            LibrarySystem.INSTANCE.init();
-	            Util.centerFrameOnDesktop(LibrarySystem.INSTANCE);
-	            LibrarySystem.INSTANCE.setVisible(true);
+
+				if(SystemController.currentAuth == null) {
+					Util.showLoginForm();
+				} else {
+					Util.showMainScreen();
+				}
 	         });
 	}
 
-	public static void startGUI() {
-		LoginWindow loginForm = new LoginWindow();
-		loginForm.setVisible(true);
-	}
 }
