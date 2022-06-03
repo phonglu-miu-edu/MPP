@@ -10,31 +10,40 @@ import dataaccess.DataAccessFacade;
 public class Librarian implements Serializable {
 
 	private static final long serialVersionUID = -6232688392326470029L;
-	private DataAccessFacade _dataAccessFacade = new DataAccessFacade();
+	private DataAccessFacade dataAccessFacade = new DataAccessFacade();
 
 	Librarian() {
 		
 	}
 	
-	LibraryMember checkout(String memberId, String isbnNumber) {
-		HashMap<String, LibraryMember> members = _dataAccessFacade.readMemberMap();
+	public LibraryMember checkout(String memberId, String isbnNumber) {
+		boolean isValid = false;
+		
+		HashMap<String, LibraryMember> members = dataAccessFacade.readMemberMap();
 		
 		for (Map.Entry<String, LibraryMember> member : members.entrySet()) {
 			LibraryMember found = member.getValue();
 			
 			if (found.getMemberId().equals(memberId)) {
-				return found;
+				isValid = true;
 			}
 		}
 		
-		HashMap<String, Book> books = _dataAccessFacade.readBooksMap();
-		
-		for (Map.Entry<String, Book> book : books.entrySet()) {
-			Book found = book.getValue();
+		if (isValid) {
+			isValid = false;
+	
+			HashMap<String, Book> books = dataAccessFacade.readBooksMap();
 			
-			if (found.getIsbn().equals(isbnNumber)) {
-				return null;
+			for (Map.Entry<String, Book> book : books.entrySet()) {
+				Book found = book.getValue();
+				
+				if (found.getIsbn().equals(isbnNumber)) {
+					isValid = true;
+				}
 			}
+		}
+		
+		if (isValid) {
 		}
 		
 		return null;
