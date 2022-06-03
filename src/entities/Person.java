@@ -3,7 +3,7 @@ package entities;
 import java.io.Serializable;
 
 public class Person implements Serializable {
-	protected static long serialVersionUID = 3665880920647848288L;
+	private static long serialVersionUID = 3665880920647848288L;
 	private String firstName;
 	private String lastName;
 	private String telephone;

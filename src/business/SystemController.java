@@ -1,7 +1,9 @@
 package business;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +13,11 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
 import entities.Book;
+import entities.CheckoutRecord;
+import entities.EntityFacade;
 import entities.LibraryMember;
 import models.LoginException;
+import models.ResponseModel;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
@@ -78,34 +83,65 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public LibraryMember checkout(String memberId, String isbnNumber) {
+	public ResponseModel<LibraryMember> checkout(int memberId, String isbnNumber, int checkoutLength) {
+		ResponseModel<LibraryMember> response = new ResponseModel<LibraryMember>();
+		
 		boolean isValid = false;
 		
+		LibraryMember member = getMember(memberId);
+		
+		if (member == null) {
+			response.setErrorMessage("Member id '" + memberId + "' not found");
+			return response;
+		}
+		
+		Book book = getBook(isbnNumber);
+		
+		if (book == null) {
+			response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
+			return response;
+		}
+		
+		int maxCheckoutLength = book.getMaxCheckoutLength();		
+		if (maxCheckoutLength < checkoutLength) {
+			response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
+			return response;
+		}
+
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, checkoutLength);
+		Date dueDate = c.getTime();
+		
+		EntityFacade entityFacade = EntityFacade.getInstance();
+		CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
+		checkoutRecord.addBook(isbnNumber, dueDate);
+		
+		return null;
+	}
+	
+	private LibraryMember getMember(int memberId) {
 		HashMap<String, LibraryMember> members = dataAccessFacade.readMemberMap();
 		
 		for (Map.Entry<String, LibraryMember> member : members.entrySet()) {
 			LibraryMember found = member.getValue();
 			
 			if (found.getMemberId().equals(memberId)) {
-				isValid = true;
+				return found;
 			}
 		}
 		
-		if (isValid) {
-			isValid = false;
-	
-			HashMap<String, Book> books = dataAccessFacade.readBooksMap();
+		return null;
+	}
+
+	private Book getBook(String isbnNumber) {
+		HashMap<String, Book> books = dataAccessFacade.readBooksMap();
+		
+		for (Map.Entry<String, Book> book : books.entrySet()) {
+			Book found = book.getValue();
 			
-			for (Map.Entry<String, Book> book : books.entrySet()) {
-				Book found = book.getValue();
-				
-				if (found.getIsbn().equals(isbnNumber)) {
-					isValid = true;
-				}
+			if (found.getIsbn().equals(isbnNumber)) {
+				return found;
 			}
-		}
-		
-		if (isValid) {
 		}
 		
 		return null;

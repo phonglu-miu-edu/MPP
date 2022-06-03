@@ -11,11 +11,12 @@ import java.util.List;
 
 import entities.Book;
 import entities.BookCopy;
+import entities.CheckoutRecord;
 import entities.LibraryMember;
 
 public class DataAccessFacade implements DataAccess {
 	enum StorageType {
-		BOOKS, MEMBERS, USERS;
+		BOOKS, MEMBERS, USERS, CHECKOUT_RECORDS;
 	}
 
 	private static final long serialVersionUID = 5399827794066637059L;
@@ -58,9 +59,7 @@ public class DataAccessFacade implements DataAccess {
 	
 	
 	/////load methods - these place test data into the storage area
-	///// - used just once at startup  
-	
-		
+	///// - used just once at startup
 	static void loadBookMap(List<Book> bookList) {
 		HashMap<String, Book> books = new HashMap<String, Book>();
 		bookList.forEach(book -> books.put(book.getIsbn(), book));
@@ -76,6 +75,11 @@ public class DataAccessFacade implements DataAccess {
 		HashMap<String, LibraryMember> members = new HashMap<String, LibraryMember>();
 		memberList.forEach(member -> members.put(member.getMemberId(), member));
 		saveToStorage(StorageType.MEMBERS, members);
+	}
+	static void loadCheckoutRecordMap(List<CheckoutRecord> checkoutRecordList) {
+		HashMap<Integer, CheckoutRecord> checkoutRecords = new HashMap<Integer, CheckoutRecord>();
+		checkoutRecordList.forEach(checkoutRecord -> checkoutRecords.put(checkoutRecord.getId(), checkoutRecord));
+		saveToStorage(StorageType.CHECKOUT_RECORDS, checkoutRecords);
 	}
 	
 	static void saveToStorage(StorageType type, Object ob) {
