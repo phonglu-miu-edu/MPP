@@ -20,8 +20,11 @@ public class GuiControl {
     /** CURR_DIR is the current working directory, which is the directory of this project*/
     public static final String CURR_DIR = System.getProperty("user.dir");
     public static final String SPLASH_IMAGE = CURR_DIR + "/src/UI/resources/logo.png";
-    public static int SCREEN_WIDTH = 640;
-    public static int SCREEN_HEIGHT = 480;
+    public static int SCREEN_WIDTH = 1040;
+    public static int SCREEN_HEIGHT = 680;
+
+    public static int LOGIN_SCREEN_WIDTH = 640;
+    public static int LOGIN_SCREEN_HEIGHT = 480;
     private static final int BOX_HEIGHT = 3;
     private static final int BOX_WIDTH = 3;
 

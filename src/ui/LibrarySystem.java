@@ -41,7 +41,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	};
     	
 	public static void hideAllWindows() {
-		
 		for(LibWindow frame: allWindows) {
 			frame.setVisible(false);
 		}
@@ -57,7 +56,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		
 		createMenus();
 		//pack();
-		setSize(660,500);
+		setSize(GuiControl.SCREEN_WIDTH,GuiControl.SCREEN_HEIGHT);
 		isInitialized = true;
     }
     
@@ -69,7 +68,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     private void setPathToImage() {
     	String currDirectory = System.getProperty("user.dir");
-    	pathToImage = currDirectory + SEPERATE + "src" + SEPERATE + "librarysystem" + SEPERATE + "library.jpg";
+    	pathToImage = currDirectory + SEPERATE + "src" + SEPERATE + "ui" + SEPERATE + "resources" + SEPERATE + "library.jpg";
     }
     
     private void insertSplashImage() {

@@ -103,7 +103,7 @@ public class Util {
         header.setForeground(TABLE_HEADER_FOREGROUND);
         Font f = header.getFont();
         f = makeBoldFont(f);
-        header.setFont(f);        
+        header.setFont(f);
         table.setTableHeader(header);  
         
         //set colors
@@ -118,7 +118,6 @@ public class Util {
 		tablePanePanel.setBackground(FILLER_COLOR);
 		
 		return tablePanePanel;
-    
     }
     public static void createCustomColumns(JTable table, 
             int tableWidth, 
@@ -134,4 +133,15 @@ public class Util {
 			table.addColumn(column);
 		}
     }
+
+	public static void showMainScreen() {
+		LibrarySystem.INSTANCE.init();
+		Util.centerFrameOnDesktop(LibrarySystem.INSTANCE);
+		LibrarySystem.INSTANCE.setVisible(true);
+	}
+
+	public static void showLoginForm() {
+		LoginWindow loginForm = new LoginWindow();
+		loginForm.setVisible(true);
+	}
 }

@@ -51,8 +51,8 @@ public class LoginWindow extends JFrame implements LibWindow {
 		getContentPane().add(mainPanel);
 	}
 	public void init() {
-		setSize(Math.round(.7f*GuiControl.SCREEN_WIDTH),
-				Math.round(.4f*GuiControl.SCREEN_HEIGHT));
+		setSize(Math.round(.7f*GuiControl.LOGIN_SCREEN_WIDTH),
+				Math.round(.4f*GuiControl.LOGIN_SCREEN_HEIGHT));
 		GuiControl.centerFrameOnDesktop(this);
 		setTitle(this.MAIN_LABEL);
 	}
@@ -147,11 +147,13 @@ public class LoginWindow extends JFrame implements LibWindow {
 				String username = this.userField.getText().trim();
 				char[] pwdChars = this.pwdField.getPassword();
 				String password = new String(pwdChars).trim();
-				System.out.println("call addLoginButtonListener");
 
-				ci.login(username, password);
+				User loginedUser = ci.login(username, password);
 				System.out.println(SystemController.currentAuth);
+				System.out.println(loginedUser.getId());
+				setVisible(false);
 				//changeScreen with auth
+				Util.showMainScreen();
 			} catch(LoginException ex) {
 				System.out.println(ex.getMessage());
 			}
