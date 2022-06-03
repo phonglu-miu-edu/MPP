@@ -13,7 +13,12 @@ import java.util.List;
 import java.util.Vector;
 
 public class CheckoutWindow extends JFrame {
-    JLabel lblMaxCheckoutLengthValue = new JLabel();
+    private LibraryMember selectedLibraryMember;
+    private Book selectedBook;
+    private int selectedCheckoutLength;
+    private int maxCheckoutLength = 0;
+    private JTextField txtCheckout = new JTextField();
+    private JLabel lblMaxCheckoutLengthValue = new JLabel();
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> new CheckoutWindow().setVisible(true));
@@ -36,6 +41,7 @@ public class CheckoutWindow extends JFrame {
         }
 
         container.add(LoadCheckoutDate());
+        container.add(LoadButton());
     }
 
     private Container LoadMembers() {
@@ -54,6 +60,10 @@ public class CheckoutWindow extends JFrame {
         container.setLayout(new FlowLayout(FlowLayout.LEFT));
         container.add(lblMember);
         container.add(comboBox);
+
+        if (members.size() > 0) {
+            this.selectedLibraryMember = members.get(0);
+        }
 
         return container;
     }
@@ -81,6 +91,7 @@ public class CheckoutWindow extends JFrame {
             }
 
             if (foundBook != null) {
+                this.selectedBook = foundBook;
                 setMaxCheckoutLengthValueLabel(foundBook.getMaxCheckoutLength());
             }
         });
@@ -93,8 +104,9 @@ public class CheckoutWindow extends JFrame {
         container.add(comboBox);
 
         if (books.size() > 0) {
-            Book firstBook = books.get(0);
-            setMaxCheckoutLengthValueLabel(firstBook.getMaxCheckoutLength());
+            Book book = books.get(0);
+            setMaxCheckoutLengthValueLabel(book.getMaxCheckoutLength());
+            this.selectedBook = book;
         }
 
         return container;
@@ -113,10 +125,37 @@ public class CheckoutWindow extends JFrame {
         return container;
     }
 
+    private Container LoadButton() {
+        JButton checkout = new JButton("Checkout");
+        checkout.addActionListener(e -> {
+            JButton button = (JButton) e.getSource();
+            CheckoutWindow checkoutWindow = (CheckoutWindow) button.getParent().getParent().getParent().getParent().getParent();
+
+            if (checkoutWindow != null) {
+                String checkoutLengthText = txtCheckout.getText();
+                int checkoutLength = Integer.parseInt(checkoutLengthText);
+                int maxCheckoutLength = checkoutWindow.selectedBook.getMaxCheckoutLength();
+
+                if (checkoutLength > maxCheckoutLength) {
+                    JOptionPane.showMessageDialog(null, "Max of checkout length is " + maxCheckoutLength);
+                    return;
+                }
+
+                // Start to checkout
+            }
+        });
+
+        Container container = new Container();
+        container.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        container.add(checkout);
+
+        return container;
+    }
+
     private Container LoadCheckoutDate() {
         JLabel lblCheckoutLength = new JLabel("Checkout length");
         JLabel lblCheckoutDays = new JLabel("day(s)");
-        JTextField txtCheckout = new JTextField();
+
         txtCheckout.setColumns(3);
         txtCheckout.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
@@ -139,5 +178,6 @@ public class CheckoutWindow extends JFrame {
 
     private void setMaxCheckoutLengthValueLabel(int length) {
         this.lblMaxCheckoutLengthValue.setText(length + " day(s)");
+        this.maxCheckoutLength = length;
     }
 }
