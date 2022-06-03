@@ -33,7 +33,7 @@ public class CheckoutWindow extends JFrame {
 	}
 
 	private Container LoadMembers() {
-		List<LibraryMember> members = SystemController.allMembers();
+		List<LibraryMember> members = new SystemController().allMembers();
 		Vector model = new Vector();
 		for (LibraryMember libraryMember : members) {
 			String id = libraryMember.getMemberId();
@@ -53,7 +53,7 @@ public class CheckoutWindow extends JFrame {
 	}
 
 	private Container LoadBooks() {
-		List<Book> books = SystemController.allBooks();
+		List<Book> books = new SystemController().allBooks();
 		Vector model = new Vector();
 		for (Book book : books) {
 			String id = book.getId();

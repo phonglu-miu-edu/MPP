@@ -22,7 +22,7 @@ import models.ResponseModel;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
-	private final DataAccessFacade dataAccessFacade = new DataAccessFacade();
+	private DataAccessFacade dataAccessFacade = new DataAccessFacade();
 	
 	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3
 	public static List<String> allWhoseZipContains3() {
@@ -53,20 +53,6 @@ public class SystemController implements ControllerInterface {
 		//implement
 		return null;	
 	}
-
-	public static List<LibraryMember> allMembers() {
-		DataAccess da = new DataAccessFacade();
-		Collection<LibraryMember> members = da.readMemberMap().values();
-
-		return members.stream().toList();
-	}
-
-	public static List<Book> allBooks() {
-		DataAccess da = new DataAccessFacade();
-		Collection<Book> books = da.readBooksMap().values();
-
-		return books.stream().toList();
-	}
 	
 	public void login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
@@ -79,14 +65,22 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Password incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
+		
 	}
-	
 	@Override
 	public List<String> allMemberIds() {
 		DataAccess da = new DataAccessFacade();
 		List<String> retval = new ArrayList<>();
 		retval.addAll(da.readMemberMap().keySet());
 		return retval;
+	}
+
+	@Override
+	public List<LibraryMember> allMembers() {
+		DataAccess da = new DataAccessFacade();
+		Collection<LibraryMember> members = da.readMemberMap().values();
+
+		return members.stream().toList();
 	}
 	
 	@Override
@@ -95,6 +89,14 @@ public class SystemController implements ControllerInterface {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(da.readBooksMap().keySet());
 		return retval;
+	}
+	
+	@Override
+	public List<Book> allBooks() {
+		DataAccess da = new DataAccessFacade();
+		Collection<Book> books = da.readBooksMap().values();
+
+		return books.stream().toList();
 	}
 
 	@Override
@@ -112,27 +114,27 @@ public class SystemController implements ControllerInterface {
 			String isbnNumber = checkoutModel.getIsbnNumber();
 			int checkoutLength = checkoutModel.getCheckoutLength();
 			
-			Book book = getBook(isbnNumber);
-			
-			if (book == null) {
-				response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
-				return response;
-			}
-			
-			int maxCheckoutLength = book.getMaxCheckoutLength();		
-			if (maxCheckoutLength < checkoutLength) {
-				response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
-				return response;
-			}
+		Book book = getBook(isbnNumber);
+		
+		if (book == null) {
+			response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
+			return response;
+		}
+		
+		int maxCheckoutLength = book.getMaxCheckoutLength();		
+		if (maxCheckoutLength < checkoutLength) {
+			response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
+			return response;
+		}
 
-			Calendar c = Calendar.getInstance();
-			c.add(Calendar.DATE, checkoutLength);
-			Date dueDate = c.getTime();
-			
-			EntityFacade entityFacade = EntityFacade.getInstance();
-			CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
-			checkoutRecord.addBook(isbnNumber, dueDate);
-			
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, checkoutLength);
+		Date dueDate = c.getTime();
+		
+		EntityFacade entityFacade = EntityFacade.getInstance();
+		CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
+		checkoutRecord.addBook(isbnNumber, dueDate);
+		
 			response.setData(checkoutRecord);
 		}
 		

@@ -3,6 +3,8 @@ package ui;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +23,8 @@ import business.SystemController;
 
 public class LibrarySystem extends JFrame implements LibWindow {
 	ControllerInterface ci = new SystemController();
-	public final static LibrarySystem INSTANCE =new LibrarySystem();
+	private static String SEPERATE = FileSystems.getDefault().getSeparator();
+	public final static LibrarySystem INSTANCE = new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
     JMenu options;
@@ -31,7 +34,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     private static LibWindow[] allWindows = { 
     	LibrarySystem.INSTANCE,
-		LoginWindow.INSTANCE,
+		//LoginWindow.INSTANCE,
 		AllMemberIdsWindow.INSTANCE,	
 		AllBookIdsWindow.INSTANCE
 	};
@@ -40,7 +43,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		
 		for(LibWindow frame: allWindows) {
 			frame.setVisible(false);
-			
 		}
 	}
     
@@ -66,7 +68,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     private void setPathToImage() {
     	String currDirectory = System.getProperty("user.dir");
-    	pathToImage = currDirectory+"\\src\\librarysystem\\library.jpg";
+    	pathToImage = currDirectory + SEPERATE + "src" + SEPERATE + "librarysystem" + SEPERATE + "library.jpg";
     }
     
     private void insertSplashImage() {
@@ -99,9 +101,9 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			LoginWindow.INSTANCE.init();
-			Util.centerFrameOnDesktop(LoginWindow.INSTANCE);
-			LoginWindow.INSTANCE.setVisible(true);
+			//LoginWindow.INSTANCE.init();
+			//Util.centerFrameOnDesktop(LoginWindow.INSTANCE);
+			//LoginWindow.INSTANCE.setVisible(true);
 			
 		}
     	
@@ -155,10 +157,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(AllMemberIdsWindow.INSTANCE);
 			AllMemberIdsWindow.INSTANCE.setVisible(true);
-			
-			
 		}
-    	
     }
 
 	@Override
@@ -169,8 +168,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 
 	@Override
 	public void isInitialized(boolean val) {
-		isInitialized =val;
-		
+		isInitialized = val;
 	}
     
 }
