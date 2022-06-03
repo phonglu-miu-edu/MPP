@@ -1,5 +1,7 @@
 package UI;
 
+import dataaccess.User;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -7,27 +9,28 @@ import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class LoginWindow extends JDialog implements IParentWindow {
+public class LoginWindow extends JFrame implements IParentWindow {
     private static final long serialVersionUID = 3258408422029144633L;
     private Window parent;
-    private final String MAIN_LABEL = "Login";
-    private final String SUBMIT_BUTN = "Submit";
+    private final String MAIN_LABEL = "";
+    private final String SUBMIT_BUTN = "Login";
     private final String CANCEL_BUTN = "Cancel";
 
-    private final String CUST_ID = "Customer Id";
+    private final String USER_ID = "Username";
     private final String PASSWORD = "Password";
 
-
-    private JTextField custIdField;
+    private JTextField userField;
     private JPasswordField pwdField;
 
     //JPanels
@@ -39,14 +42,11 @@ public class LoginWindow extends JDialog implements IParentWindow {
         initializeWindow();
         defineMainPanel();
         getContentPane().add(mainPanel);
-
     }
     private void initializeWindow() {
-
         setSize(Math.round(.7f*GuiControl.SCREEN_WIDTH),
                 Math.round(.4f*GuiControl.SCREEN_HEIGHT));
         GuiControl.centerFrameOnDesktop(this);
-
     }
 
     private void defineMainPanel() {
@@ -60,7 +60,6 @@ public class LoginWindow extends JDialog implements IParentWindow {
         mainPanel.add(upper,BorderLayout.NORTH);
         mainPanel.add(middle,BorderLayout.CENTER);
         mainPanel.add(lower,BorderLayout.SOUTH);
-
     }
     //label
     public void defineUpperPanel(){
@@ -88,18 +87,14 @@ public class LoginWindow extends JDialog implements IParentWindow {
         gridPanel.setLayout(gl);
         gridPanel.setBorder(new WindowBorder(GuiControl.WINDOW_BORDER));
 
-
-
         //add fields
-        makeLabel(gridPanel,CUST_ID);
-        custIdField = new JTextField(10);
-        gridPanel.add(custIdField);
+        makeLabel(gridPanel, USER_ID);
+        userField = new JTextField(10);
+        gridPanel.add(userField);
 
         makeLabel(gridPanel,PASSWORD);
         pwdField = new JPasswordField(10);
         gridPanel.add(pwdField);
-
-
     }
     //buttons
     public void defineLowerPanel(){
@@ -107,15 +102,13 @@ public class LoginWindow extends JDialog implements IParentWindow {
         JButton submitButton = new JButton(SUBMIT_BUTN);
         submitButton.addActionListener(new SubmitListener());
 
-
         //cancel button
-        JButton cancelButton = new JButton(CANCEL_BUTN);
-        cancelButton.addActionListener(new CancelListener());
-
-
+        //JButton cancelButton = new JButton(CANCEL_BUTN);
+        //cancelButton.addActionListener(new CancelListener());
 
         //create lower panel
-        JButton [] buttons = {submitButton,cancelButton};
+        //JButton [] buttons = {submitButton,cancelButton};
+        JButton[] buttons = {submitButton};
         lower = GuiControl.createStandardButtonPanel(buttons);
     }
 
@@ -139,10 +132,20 @@ public class LoginWindow extends JDialog implements IParentWindow {
     public Window getParentWindow() {
         return parent;
     }
+    private void addLoginButtonListener(JButton btn) {
+        btn.addActionListener(evt -> {
+            String username = this.userField.getText().trim();
+            char[] pwdChars = this.pwdField.getPassword();
+            String password = new String(pwdChars).trim();
+            User login;
+            List<User> list;
+            //if(username.length() == 0 || pwd)
+        });
+    }
     class SubmitListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
             setVisible(false);
-            String id = custIdField.getText();
+            String id = userField.getText();
             char[] pwdAsChars = pwdField.getPassword();
             String pwd = new String(pwdAsChars);
             System.out.println(pwd);
@@ -166,12 +169,10 @@ public class LoginWindow extends JDialog implements IParentWindow {
     }
     class CancelListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
-
             if(parent != null) {
                 parent.setVisible(true);
             }
             LoginWindow.this.dispose();
-
         }
     }
 

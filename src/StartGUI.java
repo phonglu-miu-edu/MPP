@@ -6,7 +6,9 @@ import UI.LoginWindow;
 public class StartGUI {
     private final String APP_NAME = "Library Management System";
     public StartGUI() {
-        //
+        LoginWindow window = new LoginWindow();
+        window.setTitle(this.APP_NAME);
+        window.setVisible(true);
     }
 
     public static void main(String[] args) {
