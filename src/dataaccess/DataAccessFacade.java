@@ -12,15 +12,17 @@ import java.util.List;
 import entities.Book;
 import entities.BookCopy;
 import entities.LibraryMember;
-import dataaccess.DataAccessFacade.StorageType;
-
 
 public class DataAccessFacade implements DataAccess {
 	enum StorageType {
 		BOOKS, MEMBERS, USERS;
 	}
+
+	private static final long serialVersionUID = 5399827794066637059L;
+
+	private static final String SEPERATOR = FileSystems.getDefault().getSeparator();
 	
-	public static final String OUTPUT_DIR = System.getProperty("user.dir") + "\\src\\dataaccess\\storage";
+	public static final String OUTPUT_DIR = System.getProperty("user.dir") + SEPERATOR + "src" + SEPERATOR + "dataaccess" + SEPERATOR + "storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
@@ -139,7 +141,7 @@ public class DataAccessFacade implements DataAccess {
 		public String toString() {
 			return "(" + first.toString() + ", " + second.toString() + ")";
 		}
-		private static final long serialVersionUID = 5399827794066637059L;
+
 	}
 	
 }
