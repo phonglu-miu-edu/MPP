@@ -2,12 +2,12 @@ package business;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-
+import java.util.Iterator;
 
 import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 
-final public class LibraryMember extends Person implements Serializable {
+public final class LibraryMember extends Person implements Serializable {
 	private String memberId;
 	
 	public LibraryMember(String memberId, String fname, String lname, String tel,Address add) {
@@ -15,12 +15,9 @@ final public class LibraryMember extends Person implements Serializable {
 		this.memberId = memberId;		
 	}
 	
-	
 	public String getMemberId() {
 		return memberId;
 	}
-
-	
 	
 	@Override
 	public String toString() {

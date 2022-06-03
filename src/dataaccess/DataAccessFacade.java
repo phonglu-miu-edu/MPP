@@ -16,13 +16,11 @@ import dataaccess.DataAccessFacade.StorageType;
 
 
 public class DataAccessFacade implements DataAccess {
-	
 	enum StorageType {
 		BOOKS, MEMBERS, USERS;
 	}
 	
-	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
-			+ "\\src\\dataaccess\\storage";
+	public static final String OUTPUT_DIR = System.getProperty("user.dir") + "\\src\\dataaccess\\storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
@@ -115,8 +113,7 @@ public class DataAccessFacade implements DataAccess {
 	}
 	
 	
-	
-	final static class Pair<S,T> implements Serializable{
+	static final class Pair<S,T> implements Serializable{
 		
 		S first;
 		T second;
