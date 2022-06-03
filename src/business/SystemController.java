@@ -1,5 +1,6 @@
 package business;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -54,7 +55,7 @@ public class SystemController implements ControllerInterface {
 		return null;	
 	}
 	
-	public void login(String id, String password) throws LoginException {
+	public User login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
 		if(!map.containsKey(id)) {
@@ -65,7 +66,15 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Password incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
-		
+		return map.get(id);
+	}
+
+	public void doChangeScene(User loginedUser) throws IOException {
+		//check loginedUser to display left nav
+	}
+
+	public void logout() {
+		currentAuth = null;
 	}
 	@Override
 	public List<String> allMemberIds() {

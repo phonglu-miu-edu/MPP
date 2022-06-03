@@ -4,4 +4,4 @@
 .settings
 .metadata
 bin
-dataaccess/storage
+dataaccess/storage/*

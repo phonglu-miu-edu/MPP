@@ -103,7 +103,7 @@ public class Util {
         header.setForeground(TABLE_HEADER_FOREGROUND);
         Font f = header.getFont();
         f = makeBoldFont(f);
-        header.setFont(f);        
+        header.setFont(f);
         table.setTableHeader(header);  
         
         //set colors
@@ -118,7 +118,6 @@ public class Util {
 		tablePanePanel.setBackground(FILLER_COLOR);
 		
 		return tablePanePanel;
-    
     }
     public static void createCustomColumns(JTable table, 
             int tableWidth, 
