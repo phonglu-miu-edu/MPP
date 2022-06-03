@@ -2,10 +2,8 @@ package entities;
 
 import java.io.Serializable;
 
-/**
- * Immutable class
- */
-final public class BookCopy implements Serializable {
+
+public final class BookCopy implements Serializable {
 	
 	private static final long serialVersionUID = -63976228084869815L;
 	private Book book;

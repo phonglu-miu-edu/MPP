@@ -8,6 +8,8 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 
 public final class LibraryMember extends Person implements Serializable {
+	private static final long serialVersionUID = -2226197306790714013L;
+	
 	private String memberId;
 	
 	public LibraryMember(String memberId, String fname, String lname, String tel,Address add) {
@@ -24,6 +26,4 @@ public final class LibraryMember extends Person implements Serializable {
 		return "Member Info: " + "ID: " + memberId + ", name: " + getFirstName() + " " + getLastName() + 
 				", " + getTelephone() + " " + getAddress();
 	}
-
-	private static final long serialVersionUID = -2226197306790714013L;
 }

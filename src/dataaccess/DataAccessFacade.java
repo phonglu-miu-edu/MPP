@@ -9,9 +9,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
-import business.Book;
-import business.BookCopy;
-import business.LibraryMember;
+import entities.Book;
+import entities.BookCopy;
+import entities.LibraryMember;
 import dataaccess.DataAccessFacade.StorageType;
 
 
@@ -32,10 +32,10 @@ public class DataAccessFacade implements DataAccess {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public  HashMap<String,Book> readBooksMap() {
+	public HashMap<String, Book> readBooksMap() {
 		//Returns a Map with name/value pairs being
 		//   isbn -> Book
-		return (HashMap<String,Book>) readFromStorage(StorageType.BOOKS);
+		return (HashMap<String, Book>) readFromStorage(StorageType.BOOKS);
 	}
 	
 	@SuppressWarnings("unchecked")
