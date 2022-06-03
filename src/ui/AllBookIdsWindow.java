@@ -18,6 +18,7 @@ import java.util.Properties;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -91,8 +92,21 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 
 		//populateTextArea();
 		//middlePanel.add(textArea);
+		JButton addBook = new JButton("Add Book");
+		addBookButtonListener(addBook);
 		middlePanel.add(tablePanePanel);
+		middlePanel.add(addBook);
 		
+	}
+	
+	private void addBookButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			LibrarySystem.hideAllWindows();
+			AddNewBookWindow.INSTANCE.init();
+			AddNewBookWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
+			AddNewBookWindow.INSTANCE.setVisible(true);	
+		});
 	}
 	
 	private void updateModel() {
@@ -113,25 +127,25 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	
 	private void createTableAndTablePane() {
 		//updateModel();
-//		HashMap<String, Book> data = ci.allBooks();
-//		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors", "", "", ""};
-//		int i = 0;
-//		String[][] contents = new String[data.size()][8];
-//		for(String x: data.keySet()) {
-//			contents[i][0] = String.valueOf(i+1);
-//			contents[i][1] = data.get(x).getTitle();
-//			contents[i][2] = data.get(x).getIsbn();
-//			contents[i][3] = data.get(x).getCopies().toString();
-//			contents[i][4] = data.get(x).getAuthors().get(0).getFirstName() + " " + data.get(x).getAuthors().get(0).getLastName();
-//			contents[i][5] = "";
-//			contents[i][6] = "";
-//			contents[i][7] = "";
-//			i++;
-//		}
-//		table = new JTable(contents, columnNames);
-//		tablePane = new JScrollPane();
-//		tablePane.setPreferredSize(new Dimension(TABLE_WIDTH, DEFAULT_TABLE_HEIGHT));
-//		tablePane.getViewport().add(table);
+		List<Book> data = ci.allBooks();
+		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors", "", "", ""};
+		int i = 0;
+		String[][] contents = new String[data.size()][8];
+		for(Book x: data) {
+			contents[i][0] = String.valueOf(i+1);
+			contents[i][1] = x.getTitle();
+			contents[i][2] = x.getIsbn();
+			contents[i][3] = x.getCopies().toString();
+			contents[i][4] = x.getAuthors().get(0).getFirstName() + " " + x.getAuthors().get(0).getLastName();
+			contents[i][5] = "";
+			contents[i][6] = "";
+			contents[i][7] = "";
+			i++;
+		}
+		table = new JTable(contents, columnNames);
+		tablePane = new JScrollPane();
+		tablePane.setPreferredSize(new Dimension(TABLE_WIDTH, DEFAULT_TABLE_HEIGHT));
+		tablePane.getViewport().add(table);
 		//updateTable();
 	}
 	
