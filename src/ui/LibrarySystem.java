@@ -3,6 +3,8 @@ package ui;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +23,8 @@ import business.SystemController;
 
 public class LibrarySystem extends JFrame implements LibWindow {
 	ControllerInterface ci = new SystemController();
-	public final static LibrarySystem INSTANCE =new LibrarySystem();
+	private static String SEPERATE = FileSystems.getDefault().getSeparator();
+	public final static LibrarySystem INSTANCE = new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
     JMenu options;
@@ -40,7 +43,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		
 		for(LibWindow frame: allWindows) {
 			frame.setVisible(false);
-			
 		}
 	}
     
@@ -66,7 +68,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     private void setPathToImage() {
     	String currDirectory = System.getProperty("user.dir");
-    	pathToImage = currDirectory+"\\src\\librarysystem\\library.jpg";
+    	pathToImage = currDirectory + SEPERATE + "src" + SEPERATE + "librarysystem" + SEPERATE + "library.jpg";
     }
     
     private void insertSplashImage() {
