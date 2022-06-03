@@ -16,12 +16,13 @@ import entities.Book;
 import entities.CheckoutRecord;
 import entities.EntityFacade;
 import entities.LibraryMember;
+import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
-	private DataAccessFacade dataAccessFacade = new DataAccessFacade();
+	private final DataAccessFacade dataAccessFacade = new DataAccessFacade();
 	
 	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3
 	public static List<String> allWhoseZipContains3() {
@@ -52,6 +53,20 @@ public class SystemController implements ControllerInterface {
 		//implement
 		return null;	
 	}
+
+	public static List<LibraryMember> allMembers() {
+		DataAccess da = new DataAccessFacade();
+		Collection<LibraryMember> members = da.readMemberMap().values();
+
+		return members.stream().toList();
+	}
+
+	public static List<Book> allBooks() {
+		DataAccess da = new DataAccessFacade();
+		Collection<Book> books = da.readBooksMap().values();
+
+		return books.stream().toList();
+	}
 	
 	public void login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
@@ -64,8 +79,8 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Password incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
-		
 	}
+	
 	@Override
 	public List<String> allMemberIds() {
 		DataAccess da = new DataAccessFacade();
@@ -83,10 +98,8 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public ResponseModel<LibraryMember> checkout(int memberId, String isbnNumber, int checkoutLength) {
-		ResponseModel<LibraryMember> response = new ResponseModel<LibraryMember>();
-		
-		boolean isValid = false;
+	public ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels) {
+		ResponseModel<CheckoutRecord> response = new ResponseModel<CheckoutRecord>();
 		
 		LibraryMember member = getMember(memberId);
 		
@@ -95,31 +108,38 @@ public class SystemController implements ControllerInterface {
 			return response;
 		}
 		
-		Book book = getBook(isbnNumber);
-		
-		if (book == null) {
-			response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
-			return response;
-		}
-		
-		int maxCheckoutLength = book.getMaxCheckoutLength();		
-		if (maxCheckoutLength < checkoutLength) {
-			response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
-			return response;
-		}
+		for (CheckoutModel checkoutModel : checkoutModels) {
+			String isbnNumber = checkoutModel.getIsbnNumber();
+			int checkoutLength = checkoutModel.getCheckoutLength();
+			
+			Book book = getBook(isbnNumber);
+			
+			if (book == null) {
+				response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
+				return response;
+			}
+			
+			int maxCheckoutLength = book.getMaxCheckoutLength();		
+			if (maxCheckoutLength < checkoutLength) {
+				response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
+				return response;
+			}
 
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DATE, checkoutLength);
-		Date dueDate = c.getTime();
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.DATE, checkoutLength);
+			Date dueDate = c.getTime();
+			
+			EntityFacade entityFacade = EntityFacade.getInstance();
+			CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
+			checkoutRecord.addBook(isbnNumber, dueDate);
+			
+			response.setData(checkoutRecord);
+		}
 		
-		EntityFacade entityFacade = EntityFacade.getInstance();
-		CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
-		checkoutRecord.addBook(isbnNumber, dueDate);
-		
-		return null;
+		return response;
 	}
 	
-	private LibraryMember getMember(int memberId) {
+	private LibraryMember getMember(String memberId) {
 		HashMap<String, LibraryMember> members = dataAccessFacade.readMemberMap();
 		
 		for (Map.Entry<String, LibraryMember> member : members.entrySet()) {

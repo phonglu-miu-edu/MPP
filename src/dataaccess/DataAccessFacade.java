@@ -38,15 +38,26 @@ public class DataAccessFacade implements DataAccess {
 	public HashMap<String, Book> readBooksMap() {
 		//Returns a Map with name/value pairs being
 		//   isbn -> Book
-		return (HashMap<String, Book>) readFromStorage(StorageType.BOOKS);
+		HashMap<String, Book> books = (HashMap<String, Book>) readFromStorage(StorageType.BOOKS);
+
+		if (books == null) {
+			books = new HashMap<String, Book>();
+		}
+
+		return books;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public HashMap<String, LibraryMember> readMemberMap() {
 		//Returns a Map with name/value pairs being
 		//   memberId -> LibraryMember
-		return (HashMap<String, LibraryMember>) readFromStorage(
-				StorageType.MEMBERS);
+		HashMap<String, LibraryMember> members = (HashMap<String, LibraryMember>) readFromStorage(StorageType.MEMBERS);
+
+		if (members == null) {
+			members = new HashMap<String, LibraryMember>();
+		}
+
+		return members;
 	}
 	
 	
@@ -77,7 +88,7 @@ public class DataAccessFacade implements DataAccess {
 		saveToStorage(StorageType.MEMBERS, members);
 	}
 	static void loadCheckoutRecordMap(List<CheckoutRecord> checkoutRecordList) {
-		HashMap<Integer, CheckoutRecord> checkoutRecords = new HashMap<Integer, CheckoutRecord>();
+		HashMap<String, CheckoutRecord> checkoutRecords = new HashMap<String, CheckoutRecord>();
 		checkoutRecordList.forEach(checkoutRecord -> checkoutRecords.put(checkoutRecord.getId(), checkoutRecord));
 		saveToStorage(StorageType.CHECKOUT_RECORDS, checkoutRecords);
 	}

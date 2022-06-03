@@ -92,10 +92,10 @@ public class TestData {
 	@SuppressWarnings("serial")
 	List<Book> allBooks = new ArrayList<Book>() {
 		{
-			add(new Book(100, "23-11451", "The Big Fish", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))));
-			add(new Book(101, "28-12331", "Antartica", 7, Arrays.asList(allAuthors.get(2))));
-			add(new Book(102, "99-22223", "Thinking Java", 21, Arrays.asList(allAuthors.get(3))));
-			add(new Book(103, "48-56882", "Jimmy's First Day of School", 7, Arrays.asList(allAuthors.get(4))));
+			add(new Book("100", "23-11451", "The Big Fish", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))));
+			add(new Book("101", "28-12331", "Antartica", 7, Arrays.asList(allAuthors.get(2))));
+			add(new Book("102", "99-22223", "Thinking Java", 21, Arrays.asList(allAuthors.get(3))));
+			add(new Book("103", "48-56882", "Jimmy's First Day of School", 7, Arrays.asList(allAuthors.get(4))));
 		}
 	};
 	

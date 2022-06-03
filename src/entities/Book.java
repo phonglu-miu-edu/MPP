@@ -11,13 +11,13 @@ import java.util.Optional;
 public final class Book implements Serializable {
 	
 	private static final long serialVersionUID = 6110690276685962829L;
-	private int id;
+	private String id;
 	private BookCopy[] copies;
 	private List<Author> authors;
 	private String isbn;
 	private String title;
 	private int maxCheckoutLength;
-	public Book(int id, String isbn, String title, int maxCheckoutLength, List<Author> authors) {
+	public Book(String id, String isbn, String title, int maxCheckoutLength, List<Author> authors) {
 		this.id = id;
 		this.isbn = isbn;
 		this.title = title;
@@ -77,7 +77,7 @@ public final class Book implements Serializable {
 		return copies.length;
 	}
 
-	public int getId() { return this.id; }
+	public String getId() { return this.id; }
 	
 	public String getTitle() {
 		return title;
