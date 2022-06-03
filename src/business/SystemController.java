@@ -81,6 +81,12 @@ public class SystemController implements ControllerInterface {
 		retval.addAll(da.readBooksMap().keySet());
 		return retval;
 	}
+	
+	@Override
+	public HashMap<String, Book> allBooks() {
+		DataAccess da = new DataAccessFacade();
+		return da.readBooksMap();
+	}
 
 	@Override
 	public ResponseModel<LibraryMember> checkout(int memberId, String isbnNumber, int checkoutLength) {
