@@ -47,6 +47,7 @@ public class MemberWindow extends JFrame implements LibWindow {
         mainPanel.add(lowerPanel, BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
         isInitialized = true;
+        setTitle(this.MAIN_LABEL);
     }
 
     public void defineTopPanel() {
@@ -60,8 +61,6 @@ public class MemberWindow extends JFrame implements LibWindow {
         middlePanel = new JPanel();
         FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 25, 25);
         middlePanel.setLayout(fl);
-        //textArea = new TextArea(8,20);
-        //middlePanel.add(textArea);
         generateMemberGrid();
         JPanel tablePanePanel = Util.createStandardTablePanePanel(table, tablePane);
         middlePanel.add(tablePanePanel);
@@ -74,6 +73,12 @@ public class MemberWindow extends JFrame implements LibWindow {
         JButton backButton = new JButton("<== Back to Main");
         addBackButtonListener(backButton);
         lowerPanel.add(backButton);
+
+        JButton addMember = new JButton("Add Member");
+        //JButton editMember = new JButton("Edit Member");
+        addMemberButtonListener(addMember);
+        lowerPanel.add(addMember);
+        //lowerPanel.add(editMember);
     }
 
     private void generateMemberGrid() {
@@ -101,9 +106,19 @@ public class MemberWindow extends JFrame implements LibWindow {
         tablePane.getViewport().add(table);
     }
 
+    private void addMemberButtonListener(JButton btn) {
+        btn.addActionListener(evt -> {
+            LibrarySystem.hideAllWindows();
+            AddMemberWindow.memberId = maxID+1;
+            AddMemberWindow.INSTANCE.init();
+            AddMemberWindow.INSTANCE.setSize(660,500);
+            Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
+            AddMemberWindow.INSTANCE.setVisible(true);
+        });
+    }
+
     private void addBackButtonListener(JButton butn) {
         butn.addActionListener(evt -> {
-            System.out.printf("call in MemberWindow");
             LibrarySystem.hideAllWindows();
             LibrarySystem.INSTANCE.setVisible(true);
         });
