@@ -1,6 +1,5 @@
 package business;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -20,12 +19,11 @@ import entities.LibraryMember;
 import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
-import ui.Util;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
-	private final DataAccessFacade dataAccessFacade = new DataAccessFacade();
-
+	private DataAccessFacade dataAccessFacade = new DataAccessFacade();
+	
 	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3
 	public static List<String> allWhoseZipContains3() {
 		DataAccess da = new DataAccessFacade();
@@ -56,7 +54,7 @@ public class SystemController implements ControllerInterface {
 		return null;	
 	}
 	
-	public User login(String id, String password) throws LoginException {
+	public void login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
 		if(!map.containsKey(id)) {
@@ -67,16 +65,7 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Password incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
-		return map.get(id);
-	}
-
-	public void doChangeScene(User loginedUser) throws IOException {
-		//check loginedUser to display left nav
-	}
-
-	public void logout() {
-		currentAuth = null;
-		Util.showLoginForm();
+		
 	}
 	@Override
 	public List<String> allMemberIds() {
@@ -122,7 +111,7 @@ public class SystemController implements ControllerInterface {
 		}
 		
 		for (CheckoutModel checkoutModel : checkoutModels) {
-			String isbnNumber = checkoutModel.getIsbn();
+			String isbnNumber = checkoutModel.getIsbnNumber();
 			int checkoutLength = checkoutModel.getCheckoutLength();
 			
 		Book book = getBook(isbnNumber);
@@ -184,5 +173,11 @@ public class SystemController implements ControllerInterface {
 	public void addNewBook(Book book) {
 		DataAccess da = new DataAccessFacade();
 		da.saveNewBook(book);
+	}
+	
+	@Override
+	public void addCopy(List<Book> books) {
+		DataAccess da = new DataAccessFacade();
+		da.updateBooks(books);
 	}
 }

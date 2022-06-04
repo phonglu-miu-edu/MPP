@@ -168,4 +168,9 @@ public class DataAccessFacade implements DataAccess {
 
 	}
 	
+	@Override
+	public void updateBooks(List<Book> bookList) {
+		System.out.println(bookList.get(2).getNumCopies());
+		loadBookMap(bookList);
+	}
 }

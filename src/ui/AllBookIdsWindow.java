@@ -2,6 +2,7 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -11,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -23,9 +25,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import business.ControllerInterface;
 import business.SystemController;
+import dataaccess.DataAccessFacade;
 import entities.Author;
 import entities.Book;
 
@@ -95,10 +100,31 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		//populateTextArea();
 		//middlePanel.add(textArea);
 		JButton addBook = new JButton("Add Book");
+		JButton copyBook = new JButton("Copy Book");
 		addBookButtonListener(addBook);
+		copyBookButtonListener(copyBook);
 		middlePanel.add(tablePanePanel);
 		middlePanel.add(addBook);
-		
+		middlePanel.add(copyBook);
+	}
+	
+	private void copyBookButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			int index = table.getSelectedRow();
+			if (index >= 0) {
+				List<Book> data = ci.allBooks();
+				System.out.println(data.get(index).getNumCopies());
+				data.get(index).addCopy();
+				System.out.println(data.get(index).getNumCopies());
+				ci.addCopy(data);
+				LibrarySystem.hideAllWindows();
+				AllBookIdsWindow.INSTANCE.init();
+				//AllBookIdsWindow.INSTANCE.pack();
+				//AllBookIdsWindow.INSTANCE.setSize(660,500);
+				Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
+				AllBookIdsWindow.INSTANCE.setVisible(true);	
+			}
+		});
 	}
 	
 	private void addBookButtonListener(JButton butn) {
@@ -131,8 +157,9 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	private void createTableAndTablePane() {
 		//updateModel();
 		List<Book> data = ci.allBooks();
-		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors", "", "", ""};
-		String[][] contents = new String[data.size()][8];
+		//Collections.sort(data, new Sortbyroll());
+		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors"};
+		String[][] contents = new String[data.size()][7];
 		int i = 0;
 		for(Book x: data) {
 			if (Integer.parseInt(x.getId()) > this.maxID) {
@@ -149,16 +176,29 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 			contents[i][2] = x.getIsbn();
 			contents[i][3] = String.valueOf(x.getNumCopies());
 			contents[i][4] = name;
-			contents[i][5] = "";
-			contents[i][6] = "";
-			contents[i][7] = "";
 			i++;
 		}
 		table = new JTable(contents, columnNames);
+		resizeColumnWidth(table);
 		tablePane = new JScrollPane();
 		tablePane.setPreferredSize(new Dimension(TABLE_WIDTH, DEFAULT_TABLE_HEIGHT));
 		tablePane.getViewport().add(table);
 		//updateTable();
+	}
+	
+	private void resizeColumnWidth(JTable table) {
+	    final TableColumnModel columnModel = table.getColumnModel();
+	    for (int column = 0; column < table.getColumnCount(); column++) {
+	        int width = 15; // Min width
+	        for (int row = 0; row < table.getRowCount(); row++) {
+	            TableCellRenderer renderer = table.getCellRenderer(row, column);
+	            Component comp = table.prepareRenderer(renderer, row, column);
+	            width = Math.max(comp.getPreferredSize().width +1 , width);
+	        }
+	        if(width > 300)
+	            width=300;
+	        columnModel.getColumn(column).setPreferredWidth(width);
+	    }
 	}
 	
 	public void defineLowerPanel() {
@@ -205,4 +245,14 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		isInitialized = val;
 		
 	}
+	
+//	class Sortbyroll implements Comparator<Book>
+//	{
+//	    // Used for sorting in ascending order of
+//	    // roll number
+//	    public int compare(Book a, Book b)
+//	    {
+//	        return Integer.parseInt(a.getId()) - Integer.parseInt(b.getId());
+//	    }
+//	}
 }
