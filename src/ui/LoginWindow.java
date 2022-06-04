@@ -1,12 +1,9 @@
 package ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -38,12 +35,12 @@ public class LoginWindow extends JFrame implements LibWindow {
 	private JTextField userField;
 	private JPasswordField pwdField;
 
-	private JLabel messageBar;
+	private JLabel message;
 
 	//JPanels
 
 	JPanel mainPanel;
-	JPanel upper, middle, lower;
+	JPanel upper, middle, lower, messageBar;
 
 	public LoginWindow() {
 		init();
@@ -62,11 +59,13 @@ public class LoginWindow extends JFrame implements LibWindow {
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.setBackground(GuiControl.FILLER_COLOR);
 		mainPanel.setBorder(new WindowBorder(GuiControl.WINDOW_BORDER));
-		defineUpperPanel();
+		//defineUpperPanel();
 		defineMiddlePanel();
+		defineErrorMessagePanel();
 		defineLowerPanel();
-		mainPanel.add(upper,BorderLayout.NORTH);
+		//mainPanel.add(upper,BorderLayout.NORTH);
 		mainPanel.add(middle,BorderLayout.CENTER);
+		mainPanel.add(messageBar, BorderLayout.NORTH);
 		mainPanel.add(lower,BorderLayout.SOUTH);
 	}
 	//label
@@ -103,6 +102,16 @@ public class LoginWindow extends JFrame implements LibWindow {
 		makeLabel(gridPanel,PASSWORD);
 		pwdField = new JPasswordField(10);
 		gridPanel.add(pwdField);
+	}
+
+	public void defineErrorMessagePanel() {
+		messageBar = new JPanel();
+		messageBar.setBackground(GuiControl.FILLER_COLOR);
+		messageBar.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+		message = new JLabel("");
+		message.setForeground(GuiControl.ERROR_RED);
+		messageBar.add(message);
 	}
 	//buttons
 	public void defineLowerPanel(){
@@ -148,11 +157,16 @@ public class LoginWindow extends JFrame implements LibWindow {
 				char[] pwdChars = this.pwdField.getPassword();
 				String password = new String(pwdChars).trim();
 
-				User loginedUser = ci.login(username, password);
-				setVisible(false);
-				//changeScreen with auth
-				Util.showMainScreen(loginedUser.getAuthorization());
+				if(username.length() == 0 || password.length() == 0) {
+					message.setText("Username or password can not empty!");
+				} else {
+					User loginedUser = ci.login(username, password);
+					setVisible(false);
+					//changeScreen with auth
+					Util.showMainScreen(loginedUser.getAuthorization());
+				}
 			} catch(LoginException ex) {
+				message.setText(ex.getMessage());
 				System.out.println(ex.getMessage());
 			}
 		});

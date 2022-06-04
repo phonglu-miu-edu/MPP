@@ -30,6 +30,7 @@ public class GuiControl {
 
     //colors
     public static Color DARK_BLUE = Color.blue.darker();
+    public static Color ERROR_RED = Color.RED;
     public static Color LIGHT_BLUE = new Color(0xf2ffff);
     public static Color DARK_GRAY = new Color(0xcccccc);
     public static Color APRICOT = new Color(0xfff2a9);
