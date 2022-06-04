@@ -27,8 +27,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	public final static LibrarySystem INSTANCE = new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
-    JMenu options;
-    JMenuItem login, allBookIds, allMemberIds; 
+    JMenu menus;
+    JMenuItem logout, viewCheckout, viewBook, viewMember, viewOverdue;
     String pathToImage;
     private boolean isInitialized = false;
     
@@ -45,8 +45,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			frame.setVisible(false);
 		}
 	}
-    
-    
+
     private LibrarySystem() {}
     
     public void init() {
@@ -56,7 +55,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		
 		createMenus();
 		//pack();
-		setSize(GuiControl.SCREEN_WIDTH,GuiControl.SCREEN_HEIGHT);
+		setSize(GuiControl.SCREEN_WIDTH, GuiControl.SCREEN_HEIGHT);
 		isInitialized = true;
     }
     
@@ -83,17 +82,36 @@ public class LibrarySystem extends JFrame implements LibWindow {
     }
     
     private void addMenuItems() {
-       options = new JMenu("Options");  
- 	   menuBar.add(options);
- 	   login = new JMenuItem("Login");
- 	   login.addActionListener(new LoginListener());
- 	   allBookIds = new JMenuItem("All Book Ids");
- 	   allBookIds.addActionListener(new AllBookIdsListener());
- 	   allMemberIds = new JMenuItem("All Member Ids");
- 	   allMemberIds.addActionListener(new AllMemberIdsListener());
- 	   options.add(login);
- 	   options.add(allBookIds);
- 	   options.add(allMemberIds);
+		menus = new JMenu("MENU");
+		menuBar.add(menus);
+
+		viewCheckout = new JMenuItem("CHECKOUT");
+		viewCheckout.addActionListener(evt -> {
+			//push checkout Form here
+		});
+
+		viewBook = new JMenuItem("BOOK");
+		viewBook.addActionListener(new AllBookIdsListener());
+
+		viewMember = new JMenuItem("MEMBER");
+		viewMember.addActionListener(new AllMemberIdsListener());
+
+		viewOverdue = new JMenuItem("OVERDUE");
+		viewOverdue.addActionListener(evt -> {
+			//push overdue form here
+		});
+
+		logout = new JMenuItem("LOGOUT");
+		//login.addActionListener(new LoginListener());
+		logout.addActionListener(evt -> {
+			ci.logout();
+		});
+
+		menus.add(viewCheckout);
+		menus.add(viewBook);
+		menus.add(viewMember);
+		menus.add(viewOverdue);
+		menus.add(logout);
     }
     
     class LoginListener implements ActionListener {

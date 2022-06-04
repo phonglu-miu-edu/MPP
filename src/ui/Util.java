@@ -1,5 +1,7 @@
 package ui;
 
+import dataaccess.User;
+import dataaccess.Auth;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -134,13 +136,14 @@ public class Util {
 		}
     }
 
-	public static void showMainScreen() {
+	public static void showMainScreen(Auth auth) {
 		LibrarySystem.INSTANCE.init();
 		Util.centerFrameOnDesktop(LibrarySystem.INSTANCE);
 		LibrarySystem.INSTANCE.setVisible(true);
 	}
 
 	public static void showLoginForm() {
+		LibrarySystem.INSTANCE.setVisible(false);
 		LoginWindow loginForm = new LoginWindow();
 		loginForm.setVisible(true);
 	}
