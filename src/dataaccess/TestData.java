@@ -149,7 +149,7 @@ public class TestData {
 		members.get(1).getCheckoutRecord().addEntry(new CheckoutRecordEntry(bc2, LocalDate.of(2021,3,10)));
 		members.get(2).getCheckoutRecord().addEntry(new CheckoutRecordEntry(bc3, LocalDate.of(2021,8,1)));
 
-		//memberAccess.loadMemberMap(members);
-		//bookAccess.loadBookMap(allBooks);
+		//get member has overdue
+		//get book has overdue
 	}
 }
