@@ -22,6 +22,7 @@ import business.SystemController;
 
 
 public class LibrarySystem extends JFrame implements LibWindow {
+	private static final long serialVersionUID = 1L;
 	ControllerInterface ci = new SystemController();
 	private static String SEPERATE = FileSystems.getDefault().getSeparator();
 	public final static LibrarySystem INSTANCE = new LibrarySystem();
@@ -39,6 +40,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		MemberWindow.INSTANCE,
 		AllBookIdsWindow.INSTANCE,
 		AddNewBookWindow.INSTANCE,
+		CheckoutListWindow.INSTANCE,
+		AddMemberWindow.INSTANCE
 	};
     	
 	public static void hideAllWindows() {
@@ -152,7 +155,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			MemberWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
 			MemberWindow.INSTANCE.setVisible(true);
-
 		}
     }
 

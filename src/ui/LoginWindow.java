@@ -20,7 +20,7 @@ import dataaccess.User;
 import models.LoginException;
 
 public class LoginWindow extends JFrame implements LibWindow {
-	//private static final long serialVersionUID = 3258408422029144633L;
+	private static final long serialVersionUID = 3258408422029144633L;
 	private boolean isInitialized = false;
 
 	ControllerInterface ci = new SystemController();

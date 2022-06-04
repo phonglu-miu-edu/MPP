@@ -21,4 +21,6 @@ public interface ControllerInterface {
 	public ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels);
 	public void addNewBook(Book book);
 	public void addCopy(List<Book> books);
+	public List<CheckoutRecord> getCheckoutByMemberId(String memberId);
+	public void addNewLibraryMember(LibraryMember member);
 }

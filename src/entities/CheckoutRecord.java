@@ -26,4 +26,8 @@ public final class CheckoutRecord implements Serializable {
 	public String getId() {
 		return this.id;
 	}
+
+	public String getMemberId() {
+		return this.memberId;
+	}
 }

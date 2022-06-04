@@ -19,7 +19,9 @@ import javax.swing.JTextField;
 import business.ControllerInterface;
 import business.SystemController;
 import dataaccess.TestData;
+import entities.Address;
 import entities.Author;
+import entities.Book;
 import entities.LibraryMember;
 
 public class AddMemberWindow extends JFrame implements LibWindow {
@@ -53,6 +55,7 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         mainPanel.setLayout(new BorderLayout());
         defineTopPanel();
         defineMiddlePanel(AddMemberWindow.memberId);
+		defineLowerPanel();
         //defineLowerPanel();
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(middlePanel, BorderLayout.CENTER);
@@ -75,7 +78,7 @@ public class AddMemberWindow extends JFrame implements LibWindow {
 
         JPanel gridPanel = new JPanel();
         middlePanel.add(gridPanel);
-        GridLayout gl = new GridLayout(6, 2);
+        GridLayout gl = new GridLayout(8, 2);
         gl.setHgap(8);
         gl.setVgap(8);
         gridPanel.setLayout(gl);
@@ -89,11 +92,11 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         gridPanel.add(id);
 
         makeLabel(gridPanel, "Firstname");
-        firstname = new JTextField(20);
+        firstname = new JTextField(10);
         gridPanel.add(firstname);
 
         makeLabel(gridPanel, "Lastname");
-        lastname = new JTextField(20);
+        lastname = new JTextField(10);
         gridPanel.add(lastname);
 
         makeLabel(gridPanel, "telephone");
@@ -101,7 +104,7 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         gridPanel.add(phone);
 
         makeLabel(gridPanel, "Street");
-        street = new JTextField(30);
+        street = new JTextField(10);
         gridPanel.add(street);
 
         makeLabel(gridPanel, "city");
@@ -109,15 +112,60 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         gridPanel.add(city);
 
         makeLabel(gridPanel, "state");
-        state = new JTextField(15);
+        state = new JTextField(10);
         gridPanel.add(state);
 
         makeLabel(gridPanel, "zipcode");
-        zip = new JTextField(7);
+        zip = new JTextField(10);
         gridPanel.add(zip);
 
 
     }
+	
+	public void defineLowerPanel() {
+		lowerPanel = new JPanel();
+		FlowLayout fl = new FlowLayout(FlowLayout.LEFT);
+		lowerPanel.setLayout(fl);
+		JButton backButton = new JButton("<== Back to Main");
+		addBackButtonListener(backButton);
+		lowerPanel.add(backButton);
+		JButton cancelBtn = new JButton("Cancel");
+		cancelButtonListener(cancelBtn);
+		JButton addBtn = new JButton("Add");
+		addNewMemberButtonListener(addBtn);
+		lowerPanel.add(cancelBtn);
+		lowerPanel.add(addBtn);
+	}
+	
+	private void cancelButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			LibrarySystem.hideAllWindows();
+			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
+			MemberWindow.INSTANCE.setVisible(true);	
+		});
+	}
+	
+	private void addNewMemberButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			Address address = new Address(street.getText(), city.getText(), state.getText(), zip.getText());
+			LibraryMember member = new LibraryMember(id.getText(), firstname.getText(), lastname.getText(), 
+					phone.getText(), address);
+			ci.addNewLibraryMember(member);
+			LibrarySystem.hideAllWindows();
+			MemberWindow.INSTANCE.init();
+			//MemberWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
+			MemberWindow.INSTANCE.setVisible(true);
+		});
+	}
+	
+	private void addBackButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+		   LibrarySystem.hideAllWindows();
+		   Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
+		   LibrarySystem.INSTANCE.setVisible(true);
+	    });
+	}
 
     private void makeLabel(JPanel p, String s) {
         JLabel l = new JLabel(s);

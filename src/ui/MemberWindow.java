@@ -112,7 +112,7 @@ public class MemberWindow extends JFrame implements LibWindow {
             AddMemberWindow.memberId = maxID+1;
             AddMemberWindow.INSTANCE.init();
             AddMemberWindow.INSTANCE.setSize(660,500);
-            Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
+            Util.centerFrameOnDesktop(AddMemberWindow.INSTANCE);
             AddMemberWindow.INSTANCE.setVisible(true);
         });
     }

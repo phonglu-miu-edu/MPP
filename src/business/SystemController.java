@@ -186,4 +186,25 @@ public class SystemController implements ControllerInterface {
 		DataAccess da = new DataAccessFacade();
 		da.updateBooks(books);
 	}
+	
+	@Override
+	public List<CheckoutRecord> getCheckoutByMemberId(String memberId) {
+		DataAccess da = new DataAccessFacade();
+		Collection<CheckoutRecord> records = da.readCheckoutMap().values();
+
+		List<CheckoutRecord> recordsList = records.stream().toList();
+		List<CheckoutRecord> returnValue = new ArrayList<>();
+		for(CheckoutRecord record: recordsList) {
+			if (memberId.equals(record.getMemberId())) {
+				returnValue.add(record);
+			}
+		}
+		return returnValue;
+	}
+	
+	@Override
+	public void addNewLibraryMember(LibraryMember member) {
+		DataAccess da = new DataAccessFacade();
+		da.saveNewMember(member);
+	}
 }

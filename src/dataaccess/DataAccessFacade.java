@@ -173,4 +173,17 @@ public class DataAccessFacade implements DataAccess {
 		System.out.println(bookList.get(2).getNumCopies());
 		loadBookMap(bookList);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public HashMap<String, CheckoutRecord> readCheckoutMap() {
+		//Returns a Map with name/value pairs being
+		//   isbn -> Book
+		HashMap<String, CheckoutRecord> records = (HashMap<String, CheckoutRecord>) readFromStorage(StorageType.CHECKOUT_RECORDS);
+
+		if (records == null) {
+			records = new HashMap<String, CheckoutRecord>();
+		}
+
+		return records;
+	}
 }
