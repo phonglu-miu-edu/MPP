@@ -35,7 +35,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
     private static LibWindow[] allWindows = { 
     	LibrarySystem.INSTANCE,
 		//LoginWindow.INSTANCE,
-		AllMemberIdsWindow.INSTANCE,	
+		AllMemberIdsWindow.INSTANCE,
+		MemberWindow.INSTANCE,
 		AllBookIdsWindow.INSTANCE,
 		AddNewBookWindow.INSTANCE,
 	};
@@ -94,7 +95,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		viewBook.addActionListener(new AllBookIdsListener());
 
 		viewMember = new JMenuItem("MEMBER");
-		viewMember.addActionListener(new AllMemberIdsListener());
+		viewMember.addActionListener(new MemberWindowListener());
 
 		viewOverdue = new JMenuItem("OVERDUE");
 		viewOverdue.addActionListener(evt -> {
@@ -141,17 +142,18 @@ public class LibrarySystem extends JFrame implements LibWindow {
     	
     }
     
-    class AllMemberIdsListener implements ActionListener {
+    class MemberWindowListener implements ActionListener {
 
     	@Override
 		public void actionPerformed(ActionEvent e) {
+			System.out.printf("call in librarySystem");
 			LibrarySystem.hideAllWindows();
-			AllMemberIdsWindow.INSTANCE.init();
-			AllMemberIdsWindow.INSTANCE.pack();
-			AllMemberIdsWindow.INSTANCE.setVisible(true);
+			MemberWindow.INSTANCE.init();
+			MemberWindow.INSTANCE.pack();
+			MemberWindow.INSTANCE.setVisible(true);
 			
 			
-			LibrarySystem.hideAllWindows();
+			/*LibrarySystem.hideAllWindows();
 			AllBookIdsWindow.INSTANCE.init();
 			
 			List<String> ids = ci.allMemberIds();
@@ -165,7 +167,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			AllMemberIdsWindow.INSTANCE.pack();
 			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(AllMemberIdsWindow.INSTANCE);
-			AllMemberIdsWindow.INSTANCE.setVisible(true);
+			AllMemberIdsWindow.INSTANCE.setVisible(true);*/
 		}
     }
 
