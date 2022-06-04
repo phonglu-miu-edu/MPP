@@ -180,4 +180,9 @@ public class SystemController implements ControllerInterface {
 		return null;
 	}
 	
+	@Override
+	public void addNewBook(Book book) {
+		DataAccess da = new DataAccessFacade();
+		da.saveNewBook(book);
+	}
 }

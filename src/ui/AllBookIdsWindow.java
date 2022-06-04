@@ -26,6 +26,7 @@ import javax.swing.table.JTableHeader;
 
 import business.ControllerInterface;
 import business.SystemController;
+import entities.Author;
 import entities.Book;
 
 
@@ -35,6 +36,7 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
     ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
     private final float [] COL_WIDTH_PROPORTIONS =	{1.0f};
+    private int maxID = 0;
 	
 	private JPanel mainPanel;
 	private JPanel topPanel;
@@ -102,6 +104,7 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	private void addBookButtonListener(JButton butn) {
 		butn.addActionListener(evt -> {
 			LibrarySystem.hideAllWindows();
+			AddNewBookWindow.bookID = maxID+1;
 			AddNewBookWindow.INSTANCE.init();
 			AddNewBookWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
@@ -129,14 +132,23 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		//updateModel();
 		List<Book> data = ci.allBooks();
 		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors", "", "", ""};
-		int i = 0;
 		String[][] contents = new String[data.size()][8];
+		int i = 0;
 		for(Book x: data) {
-			contents[i][0] = String.valueOf(i+1);
+			if (Integer.parseInt(x.getId()) > this.maxID) {
+				this.maxID = Integer.parseInt(x.getId());
+			}
+			String name = "";
+			String com = "";
+			for(Author au: x.getAuthors()) {
+				name += com + au.getFirstName() + " " + au.getLastName();
+				com = ", ";
+			}
+			contents[i][0] = x.getId();
 			contents[i][1] = x.getTitle();
 			contents[i][2] = x.getIsbn();
-			contents[i][3] = x.getCopies().toString();
-			contents[i][4] = x.getAuthors().get(0).getFirstName() + " " + x.getAuthors().get(0).getLastName();
+			contents[i][3] = String.valueOf(x.getNumCopies());
+			contents[i][4] = name;
 			contents[i][5] = "";
 			contents[i][6] = "";
 			contents[i][7] = "";

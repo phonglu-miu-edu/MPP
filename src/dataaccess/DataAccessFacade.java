@@ -33,7 +33,16 @@ public class DataAccessFacade implements DataAccess {
 		mems.put(memberId, member);
 		saveToStorage(StorageType.MEMBERS, mems);	
 	}
-	
+
+	//implement: other save operations
+	public void saveNewBook(Book book) {
+		HashMap<String, Book> books = readBooksMap();
+		String bookId = book.getId();
+		books.put(bookId, book);
+		System.out.println(books.toString());
+		saveToStorage(StorageType.BOOKS, books);	
+	}
+
 	@SuppressWarnings("unchecked")
 	public HashMap<String, Book> readBooksMap() {
 		//Returns a Map with name/value pairs being

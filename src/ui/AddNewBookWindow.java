@@ -4,24 +4,33 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.TextArea;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import business.ControllerInterface;
 import business.SystemController;
+import dataaccess.TestData;
+import entities.Author;
+import entities.Book;
 
 public class AddNewBookWindow extends JFrame implements LibWindow {
 	private static final long serialVersionUID = 1L;
 	public static final AddNewBookWindow INSTANCE = new AddNewBookWindow();
+	public static int bookID = 0;
     ControllerInterface ci = new SystemController();
 	private boolean isInitialized = false;
 	public JPanel getMainPanel() {
@@ -31,7 +40,13 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	private JPanel topPanel;
 	private JPanel middlePanel;
 	private JPanel lowerPanel;
-	private TextArea textArea;
+	
+	private JTextField id;
+	private JTextField isbn;
+	private JTextField title;
+	private JRadioButton check1;
+	private JRadioButton check2;
+	private JList<String> authorList;
 	
 	private AddNewBookWindow() {}
 	
@@ -39,7 +54,7 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		defineTopPanel();
-		defineMiddlePanel();
+		defineMiddlePanel(this.bookID);
 		defineLowerPanel();
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(middlePanel, BorderLayout.CENTER);	
@@ -56,7 +71,7 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 		topPanel.add(AllIDsLabel);
 	}
 	
-	public void defineMiddlePanel() {
+	public void defineMiddlePanel(int maxID) {
 		middlePanel = new JPanel();
 		middlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		
@@ -70,21 +85,22 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 
 		//add fields
 		makeLabel(gridPanel, "Book ID");
-		JTextField id = new JTextField(10);
+		id = new JTextField(10);
+		id.setText(String.valueOf(maxID));
 		id.setEnabled(false);
 		gridPanel.add(id);
 
 		makeLabel(gridPanel, "ISBN");
-		JTextField isbn = new JTextField(10);
+		isbn = new JTextField(10);
 		gridPanel.add(isbn);
 
 		makeLabel(gridPanel, "Title");
-		JTextField title = new JTextField(10);
+		title = new JTextField(10);
 		gridPanel.add(title);
 
 		makeLabel(gridPanel, "Checkout days");	    
-		JRadioButton check1 = new JRadioButton("7");
-		JRadioButton check2 = new JRadioButton("21");
+		check1 = new JRadioButton("7");
+		check2 = new JRadioButton("21");
 		ButtonGroup bg=new ButtonGroup();    
 		bg.add(check1);
 		bg.add(check2);
@@ -94,9 +110,17 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	    gridPanel.add(rButtons);
 		
 		makeLabel(gridPanel, "Author");
-		String[] authors = {"A", "B", "C"};
-		JComboBox combo =new JComboBox(authors);
-		gridPanel.add(combo);
+		TestData td = new TestData();
+		List<Author> authors = td.allAuthors;
+		DefaultListModel<String> l1 = new DefaultListModel<>();  
+		l1.addElement(authors.get(1).getFirstName() + " " + authors.get(1).getLastName());
+		l1.addElement(authors.get(2).getFirstName() + " " + authors.get(2).getLastName());
+		l1.addElement(authors.get(3).getFirstName() + " " + authors.get(3).getLastName());
+//		for(Author auth: authors) {
+//			l1.addElement(auth.getFirstName() + " " + auth.getLastName());
+//		}
+		authorList = new JList<>(l1);
+        gridPanel.add(authorList);
 		
 		JButton cancelBtn = new JButton("Cancel");
 		cancelButtonListener(cancelBtn);
@@ -119,11 +143,23 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	
 	private void addNewBookButtonListener(JButton butn) {
 		butn.addActionListener(evt -> {
+			TestData td = new TestData();
+			List<Author> list = new ArrayList<>();
+			for(Author au1: td.allAuthors) {
+				for(String name: authorList.getSelectedValuesList()) {
+					if (name.equals(au1.getFirstName() + " " + au1.getLastName())) {
+						list.add(au1);
+					}
+				}
+			}
+			System.out.println(list.toString());
+			Book book = new Book(id.getText(), isbn.getText(), title.getText(), (check1.isSelected()?7:21), list);
+			ci.addNewBook(book);
 			LibrarySystem.hideAllWindows();
-			AddNewBookWindow.INSTANCE.init();
-			AddNewBookWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
-			AddNewBookWindow.INSTANCE.setVisible(true);	
+			AllBookIdsWindow.INSTANCE.init();
+			//AllBookIdsWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
+			AllBookIdsWindow.INSTANCE.setVisible(true);
 		});
 	}
 
@@ -149,9 +185,6 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 		lowerPanel.add(backButton);
 	}
 	
-	public void setData(String data) {
-		textArea.setText(data);
-	}
 	private void addBackButtonListener(JButton butn) {
 		butn.addActionListener(evt -> {
 		   LibrarySystem.hideAllWindows();
