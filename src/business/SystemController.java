@@ -19,6 +19,7 @@ import entities.LibraryMember;
 import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
+import ui.Util;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
@@ -54,7 +55,7 @@ public class SystemController implements ControllerInterface {
 		return null;	
 	}
 	
-	public void login(String id, String password) throws LoginException {
+	public User login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
 		HashMap<String, User> map = da.readUserMap();
 		if(!map.containsKey(id)) {
@@ -65,7 +66,7 @@ public class SystemController implements ControllerInterface {
 			throw new LoginException("Password incorrect");
 		}
 		currentAuth = map.get(id).getAuthorization();
-		
+		return map.get(id);
 	}
 	@Override
 	public List<String> allMemberIds() {
@@ -73,6 +74,11 @@ public class SystemController implements ControllerInterface {
 		List<String> retval = new ArrayList<>();
 		retval.addAll(da.readMemberMap().keySet());
 		return retval;
+	}
+
+	public void logout() {
+		currentAuth = null;
+		Util.showLoginForm();
 	}
 
 	@Override
@@ -111,7 +117,7 @@ public class SystemController implements ControllerInterface {
 		}
 		
 		for (CheckoutModel checkoutModel : checkoutModels) {
-			String isbnNumber = checkoutModel.getIsbnNumber();
+			String isbnNumber = checkoutModel.getIsbn();
 			int checkoutLength = checkoutModel.getCheckoutLength();
 			
 		Book book = getBook(isbnNumber);
