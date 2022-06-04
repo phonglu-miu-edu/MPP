@@ -150,6 +150,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			LibrarySystem.hideAllWindows();
 			MemberWindow.INSTANCE.init();
 			MemberWindow.INSTANCE.pack();
+			MemberWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
 			MemberWindow.INSTANCE.setVisible(true);
 			
 			

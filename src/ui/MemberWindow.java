@@ -21,12 +21,10 @@ public class MemberWindow extends JFrame implements LibWindow {
     private JPanel topPanel;
     private JPanel middlePanel;
     private JPanel lowerPanel;
-    private TextArea textArea;
     private CustomTableModel model;
 
     private JScrollPane tablePane;
     private JTable table;
-    private String[] header;
     public static Color DARK_BLUE = Color.blue.darker();
     public static Color LIGHT_BLUE = new Color(0xf2ffff);
     public static Color TABLE_HEADER_FOREGROUND = LIGHT_BLUE;
@@ -34,7 +32,6 @@ public class MemberWindow extends JFrame implements LibWindow {
 
     private final int TABLE_WIDTH = Math.round(0.75f*Util.SCREEN_WIDTH);
     private final int DEFAULT_TABLE_HEIGHT = Math.round(0.75f*Util.SCREEN_HEIGHT);
-    private String[][] contents;
     public JPanel getMainPanel() {
         return mainPanel;
     }
@@ -54,7 +51,7 @@ public class MemberWindow extends JFrame implements LibWindow {
 
     public void defineTopPanel() {
         topPanel = new JPanel();
-        JLabel memberFormLabel = new JLabel("Member");
+        JLabel memberFormLabel = new JLabel("All Members");
         Util.adjustLabelFont(memberFormLabel, Util.DARK_BLUE, true);
         topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         topPanel.add(memberFormLabel);
@@ -67,6 +64,7 @@ public class MemberWindow extends JFrame implements LibWindow {
         //middlePanel.add(textArea);
         generateMemberGrid();
         JPanel tablePanePanel = Util.createStandardTablePanePanel(table, tablePane);
+        middlePanel.add(tablePanePanel);
     }
 
     public void defineLowerPanel() {

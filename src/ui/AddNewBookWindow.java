@@ -3,22 +3,17 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.TextArea;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import business.ControllerInterface;
@@ -54,7 +49,7 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		defineTopPanel();
-		defineMiddlePanel(this.bookID);
+		defineMiddlePanel(AddNewBookWindow.bookID);
 		defineLowerPanel();
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(middlePanel, BorderLayout.CENTER);	
@@ -121,13 +116,6 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 //		}
 		authorList = new JList<>(l1);
         gridPanel.add(authorList);
-		
-		JButton cancelBtn = new JButton("Cancel");
-		cancelButtonListener(cancelBtn);
-		JButton addBtn = new JButton("Add");
-		addNewBookButtonListener(addBtn);
-		gridPanel.add(cancelBtn);
-		gridPanel.add(addBtn);
 	}
 	
 	private void cancelButtonListener(JButton butn) {
@@ -183,6 +171,12 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 		JButton backButton = new JButton("<== Back to Main");
 		addBackButtonListener(backButton);
 		lowerPanel.add(backButton);
+		JButton cancelBtn = new JButton("Cancel");
+		cancelButtonListener(cancelBtn);
+		JButton addBtn = new JButton("Add");
+		addNewBookButtonListener(addBtn);
+		lowerPanel.add(cancelBtn);
+		lowerPanel.add(addBtn);
 	}
 	
 	private void addBackButtonListener(JButton butn) {

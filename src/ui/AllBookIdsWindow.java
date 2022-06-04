@@ -5,32 +5,22 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import business.ControllerInterface;
 import business.SystemController;
-import dataaccess.DataAccessFacade;
 import entities.Author;
 import entities.Book;
 
@@ -40,7 +30,6 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	public static final AllBookIdsWindow INSTANCE = new AllBookIdsWindow();
     ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
-    private final float [] COL_WIDTH_PROPORTIONS =	{1.0f};
     private int maxID = 0;
 	
 	private JPanel mainPanel;
@@ -48,11 +37,9 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	private JPanel middlePanel;
 	private JPanel lowerPanel;
 	private TextArea textArea;
-    private CustomTableModel model;
 	
 	private JScrollPane tablePane;
 	private JTable table;
-	private String[] header;
 	
 
 	public static Color DARK_BLUE = Color.blue.darker();
@@ -62,7 +49,6 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	
 	private final int TABLE_WIDTH = Math.round(0.75f*Util.SCREEN_WIDTH);
     private final int DEFAULT_TABLE_HEIGHT = Math.round(0.75f*Util.SCREEN_HEIGHT);
-	private String[][] contents;
 	
 	//Singleton class
 	private AllBookIdsWindow() {}
@@ -99,13 +85,7 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 
 		//populateTextArea();
 		//middlePanel.add(textArea);
-		JButton addBook = new JButton("Add Book");
-		JButton copyBook = new JButton("Copy Book");
-		addBookButtonListener(addBook);
-		copyBookButtonListener(copyBook);
 		middlePanel.add(tablePanePanel);
-		middlePanel.add(addBook);
-		middlePanel.add(copyBook);
 	}
 	
 	private void copyBookButtonListener(JButton butn) {
@@ -138,24 +118,7 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		});
 	}
 	
-	private void updateModel() {
-		List<String[]> theData = new ArrayList<String[]>();
-		ci.allBooks();
-		header = new String[]{"List of Available Books"};
-		updateModel(theData);
- 	}
-	
-	public void updateModel(List<String[]> list){
-		if(model == null) {
-	        model = new CustomTableModel();
-    	    
-		}
-		//header = new String[]{"ID", "Title", "ISBN", "Copies", "Authors"};
-		model.setTableValues(list);	
-	}
-	
 	private void createTableAndTablePane() {
-		//updateModel();
 		List<Book> data = ci.allBooks();
 		//Collections.sort(data, new Sortbyroll());
 		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors"};
@@ -208,6 +171,12 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		lowerPanel = new JPanel();
 		lowerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));;
 		lowerPanel.add(backToMainButn);
+		JButton addBook = new JButton("Add Book");
+		JButton copyBook = new JButton("Copy Book");
+		addBookButtonListener(addBook);
+		copyBookButtonListener(copyBook);
+		lowerPanel.add(addBook);
+		lowerPanel.add(copyBook);
 	}
 	
 	class BackToMainListener implements ActionListener {
@@ -223,17 +192,6 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		textArea.setText(data);
 	}
 	
-//	private void populateTextArea() {
-//		//populate
-//		List<String> ids = ci.allBookIds();
-//		Collections.sort(ids);
-//		StringBuilder sb = new StringBuilder();
-//		for(String s: ids) {
-//			sb.append(s + "\n");
-//		}
-//		textArea.setText(sb.toString());
-//	}
-
 	@Override
 	public boolean isInitialized() {
 		// TODO Auto-generated method stub
