@@ -18,4 +18,5 @@ public final class Author extends Person implements Serializable {
 		return bio;
 	}
 	public String getId() { return id; }
+	public String getCredentials() { return this.credentials;}
 }

@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 
 import business.ControllerInterface;
 import business.SystemController;
+import dataaccess.Auth;
 
 
 public class LibrarySystem extends JFrame implements LibWindow {
@@ -82,40 +83,52 @@ public class LibrarySystem extends JFrame implements LibWindow {
     	menuBar = new JMenuBar();
 		menuBar.setBorder(BorderFactory.createRaisedBevelBorder());
 		addMenuItems();
-		setJMenuBar(menuBar);		
+		setJMenuBar(menuBar);
     }
     
     private void addMenuItems() {
 		menus = new JMenu("MENU");
 		menuBar.add(menus);
 
-		viewCheckout = new JMenuItem("CHECKOUT");
-		viewCheckout.addActionListener(evt -> {
-			//push checkout Form here
-		});
+		Auth loginedRole = SystemController.currentAuth;
+		if(loginedRole == null) {
+			hideAllWindows();
+			Util.showLoginForm();
+		} else {
+			logout = new JMenuItem("LOGOUT");
+			//login.addActionListener(new LoginListener());
+			logout.addActionListener(evt -> {
+				ci.logout();
+			});
 
-		viewBook = new JMenuItem("BOOK");
-		viewBook.addActionListener(new AllBookIdsListener());
+			if(loginedRole.equals(Auth.BOTH) || loginedRole.equals(Auth.LIBRARIAN)) {
 
-		viewMember = new JMenuItem("MEMBER");
-		viewMember.addActionListener(new MemberWindowListener());
+				viewCheckout = new JMenuItem("CHECKOUT");
+				viewCheckout.addActionListener(evt -> {
+					//push checkout Form here
+				});
+				menus.add(viewCheckout);
+			}
+			if(loginedRole.equals(Auth.BOTH) || loginedRole.equals(Auth.ADMIN)) {
 
-		viewOverdue = new JMenuItem("OVERDUE");
-		viewOverdue.addActionListener(evt -> {
-			//push overdue form here
-		});
+				viewBook = new JMenuItem("BOOK");
+				viewBook.addActionListener(new AllBookIdsListener());
 
-		logout = new JMenuItem("LOGOUT");
-		//login.addActionListener(new LoginListener());
-		logout.addActionListener(evt -> {
-			ci.logout();
-		});
+				viewMember = new JMenuItem("MEMBER");
+				viewMember.addActionListener(new MemberWindowListener());
 
-		menus.add(viewCheckout);
-		menus.add(viewBook);
-		menus.add(viewMember);
-		menus.add(viewOverdue);
-		menus.add(logout);
+				menus.add(viewBook);
+				menus.add(viewMember);
+			}
+
+			viewOverdue = new JMenuItem("OVERDUE");
+			viewOverdue.addActionListener(evt -> {
+				//push overdue form here
+			});
+
+			menus.add(viewOverdue);
+			menus.add(logout);
+		}
     }
     
     class LoginListener implements ActionListener {
