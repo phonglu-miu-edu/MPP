@@ -1,5 +1,6 @@
 package dataaccess;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,8 @@ import entities.Address;
 import entities.Author;
 import entities.Book;
 import entities.LibraryMember;
+import entities.CheckoutRecordEntry;
+import entities.BookCopy;
 
 /**
  * This class loads data into the data repository and also
@@ -106,4 +109,39 @@ public class TestData {
 			add(new User("103", "111", Auth.BOTH));
 		}
 	};
+
+	/*@SuppressWarnings("serial")
+	List<CheckoutRecordEntry> allCheckoutEntries = new ArrayList<>() {
+		{
+			BookCopy bc1 = allBooks.get(0).getCopy(1);
+			bc1.changeAvailability();
+			add(new CheckoutRecordEntry(bc1, LocalDate.of(2021,11,1)));
+			BookCopy bc2 = allBooks.get(1).getCopy(1);
+			bc2.changeAvailability();
+			add(new CheckoutRecordEntry(bc2, LocalDate.of(2021,10,1)));
+			BookCopy bc3 = allBooks.get(2).getCopy(1);
+			bc3.changeAvailability();
+			add(new CheckoutRecordEntry(bc3, LocalDate.of(2021,6,1)));
+		}
+	};*/
+
+	/*private void overdueCheckout() {
+		members.get(2).getCheckoutRecord().add(allCheckoutEntries.get(0));
+		members.get(2).getCheckoutRecord().add(allCheckoutEntries.get(1));
+		members.get(0).getCheckoutRecord().add(allCheckoutEntries.get(2));
+
+		BookCopy bc1 = allBooks.get(3).getCopy(3);
+		bc1.changeAvailability();
+		BookCopy bc2 = allBooks.get(3).getCopy(5);
+		bc2.changeAvailability();
+		BookCopy bc3 = allBooks.get(3).getCopy(2);
+		bc3.changeAvailability();
+
+		members.get(0).getCheckoutRecord().add(new CheckoutEntry(bc1, LocalDate.of(2021,2,1)));
+		members.get(1).getCheckoutRecord().add(new CheckoutEntry(bc2, LocalDate.of(2021,3,10)));
+		members.get(2).getCheckoutRecord().add(new CheckoutEntry(bc3, LocalDate.of(2021,8,1)));
+
+		memberAccess.loadMemberMap(members);
+		bookAccess.loadBookMap(allBooks);
+	}*/
 }

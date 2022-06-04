@@ -119,7 +119,6 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         zip = new JTextField(10);
         gridPanel.add(zip);
 
-
     }
 	
 	public void defineLowerPanel() {

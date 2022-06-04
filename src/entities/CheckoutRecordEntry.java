@@ -8,6 +8,7 @@ public final class CheckoutRecordEntry implements Serializable {
 	private static final long serialVersionUID = 2790400064232857746L;
 
 	private String isbnNumber;
+	//private BookCopy bookCopy;
 	private Date checkoutDate;
 	private Date dueDate;
 	
