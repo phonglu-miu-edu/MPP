@@ -107,7 +107,8 @@ public class SystemController implements ControllerInterface {
 
 	@Override
 	public ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels) {
-		ResponseModel<CheckoutRecord> response = new ResponseModel<CheckoutRecord>();
+		return new ResponseModel<CheckoutRecord>();
+		/*ResponseModel<CheckoutRecord> response = new ResponseModel<CheckoutRecord>();
 		
 		LibraryMember member = getMember(memberId);
 		
@@ -140,11 +141,12 @@ public class SystemController implements ControllerInterface {
 		EntityFacade entityFacade = EntityFacade.getInstance();
 		CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
 		checkoutRecord.addBook(isbnNumber, dueDate);
+			//checkoutRecord.addEntry();
 		
 			response.setData(checkoutRecord);
 		}
 		
-		return response;
+		return response;*/
 	}
 	
 	private LibraryMember getMember(String memberId) {
@@ -186,7 +188,8 @@ public class SystemController implements ControllerInterface {
 		DataAccess da = new DataAccessFacade();
 		da.updateBooks(books);
 	}
-	
+
+	//Only one CheckoutRecord for each member.
 	@Override
 	public List<CheckoutRecord> getCheckoutByMemberId(String memberId) {
 		DataAccess da = new DataAccessFacade();
@@ -195,11 +198,15 @@ public class SystemController implements ControllerInterface {
 		List<CheckoutRecord> recordsList = records.stream().toList();
 		List<CheckoutRecord> returnValue = new ArrayList<>();
 		for(CheckoutRecord record: recordsList) {
-			if (memberId.equals(record.getMemberId())) {
+			/*if (memberId.equals(record.getMemberId())) {
 				returnValue.add(record);
-			}
+			}*/
 		}
 		return returnValue;
+	}
+	public CheckoutRecord getMemberCheckoutRecord(LibraryMember member) {
+		//need to improve here
+		return new CheckoutRecord(member);
 	}
 	
 	@Override

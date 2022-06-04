@@ -10,6 +10,7 @@ import entities.Author;
 import entities.Book;
 import entities.LibraryMember;
 import entities.CheckoutRecordEntry;
+import entities.CheckoutRecord;
 import entities.BookCopy;
 
 /**
@@ -52,6 +53,7 @@ public class TestData {
 	public void libraryMemberData() {
 		LibraryMember libraryMember = new LibraryMember("1001", "Andy", "Rogers", "641-223-2211", addresses.get(4));
 		members.add(libraryMember);
+
 		libraryMember = new LibraryMember("1002", "Drew", "Stevens", "702-998-2414", addresses.get(5));
 		members.add(libraryMember);
 		
@@ -110,25 +112,31 @@ public class TestData {
 		}
 	};
 
-	/*@SuppressWarnings("serial")
+	@SuppressWarnings("serial")
 	List<CheckoutRecordEntry> allCheckoutEntries = new ArrayList<>() {
 		{
 			BookCopy bc1 = allBooks.get(0).getCopy(1);
 			bc1.changeAvailability();
-			add(new CheckoutRecordEntry(bc1, LocalDate.of(2021,11,1)));
+			add(new CheckoutRecordEntry(bc1, LocalDate.of(2022, 5,  20)));
+
 			BookCopy bc2 = allBooks.get(1).getCopy(1);
 			bc2.changeAvailability();
-			add(new CheckoutRecordEntry(bc2, LocalDate.of(2021,10,1)));
+			add(new CheckoutRecordEntry(bc2, LocalDate.of(2022,5,23)));
+
 			BookCopy bc3 = allBooks.get(2).getCopy(1);
 			bc3.changeAvailability();
-			add(new CheckoutRecordEntry(bc3, LocalDate.of(2021,6,1)));
-		}
-	};*/
+			add(new CheckoutRecordEntry(bc3, LocalDate.of(2022,5,28)));
 
-	/*private void overdueCheckout() {
-		members.get(2).getCheckoutRecord().add(allCheckoutEntries.get(0));
-		members.get(2).getCheckoutRecord().add(allCheckoutEntries.get(1));
-		members.get(0).getCheckoutRecord().add(allCheckoutEntries.get(2));
+			BookCopy bc4 = allBooks.get(3).getCopy(1);
+			bc4.changeAvailability();
+			add(new CheckoutRecordEntry(bc4, LocalDate.of(2022,5,31)));
+		}
+	};
+
+	private void overdueCheckout() {
+		members.get(2).getCheckoutRecord().addEntry(allCheckoutEntries.get(0));
+		members.get(2).getCheckoutRecord().addEntry(allCheckoutEntries.get(1));
+		members.get(0).getCheckoutRecord().addEntry(allCheckoutEntries.get(2));
 
 		BookCopy bc1 = allBooks.get(3).getCopy(3);
 		bc1.changeAvailability();
@@ -137,11 +145,11 @@ public class TestData {
 		BookCopy bc3 = allBooks.get(3).getCopy(2);
 		bc3.changeAvailability();
 
-		members.get(0).getCheckoutRecord().add(new CheckoutEntry(bc1, LocalDate.of(2021,2,1)));
-		members.get(1).getCheckoutRecord().add(new CheckoutEntry(bc2, LocalDate.of(2021,3,10)));
-		members.get(2).getCheckoutRecord().add(new CheckoutEntry(bc3, LocalDate.of(2021,8,1)));
+		members.get(0).getCheckoutRecord().addEntry(new CheckoutRecordEntry(bc1, LocalDate.of(2021,2,1)));
+		members.get(1).getCheckoutRecord().addEntry(new CheckoutRecordEntry(bc2, LocalDate.of(2021,3,10)));
+		members.get(2).getCheckoutRecord().addEntry(new CheckoutRecordEntry(bc3, LocalDate.of(2021,8,1)));
 
-		memberAccess.loadMemberMap(members);
-		bookAccess.loadBookMap(allBooks);
-	}*/
+		//memberAccess.loadMemberMap(members);
+		//bookAccess.loadBookMap(allBooks);
+	}
 }

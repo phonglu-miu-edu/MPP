@@ -2,24 +2,22 @@ package entities;
 
 import java.io.Serializable;
 
-
 public final class BookCopy implements Serializable {
 	
 	private static final long serialVersionUID = -63976228084869815L;
 	private Book book;
 	private int copyNum;
 	private boolean isAvailable;
-	BookCopy(Book book, int copyNum, boolean isAvailable) {
+	public BookCopy(Book book, int copyNum, boolean isAvailable) {
 		this.book = book;
 		this.copyNum = copyNum;
 		this.isAvailable = isAvailable;
 	}
 	
-	BookCopy(Book book, int copyNum) {
+	public BookCopy(Book book, int copyNum) {
 		this.book = book;
 		this.copyNum = copyNum;
 	}
-	
 	
 	public boolean isAvailable() {
 		return isAvailable;
@@ -40,9 +38,10 @@ public final class BookCopy implements Serializable {
 	@Override
 	public boolean equals(Object ob) {
 		if(ob == null) return false;
+
 		if(!(ob instanceof BookCopy)) return false;
-		BookCopy copy = (BookCopy)ob;
+
+		BookCopy copy = (BookCopy) ob;
 		return copy.book.getIsbn().equals(book.getIsbn()) && copy.copyNum == copyNum;
 	}
-	
 }

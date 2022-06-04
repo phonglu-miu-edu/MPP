@@ -7,8 +7,8 @@ public class EntityFacade {
 		return instance;
 	}
 	
-	public CheckoutRecord createCheckoutRecord(String memberId) {
-		CheckoutRecord checkoutRecord = new CheckoutRecord(memberId);
+	public CheckoutRecord createCheckoutRecord(LibraryMember member) {
+		CheckoutRecord checkoutRecord = new CheckoutRecord(member);
 		
 		return checkoutRecord;
 	}

@@ -25,7 +25,7 @@ import dataaccess.Auth;
 public class LibrarySystem extends JFrame implements LibWindow {
 	private static final long serialVersionUID = 1L;
 	ControllerInterface ci = new SystemController();
-	private static String SEPERATE = FileSystems.getDefault().getSeparator();
+	private static String SEPARATOR = FileSystems.getDefault().getSeparator();
 	public final static LibrarySystem INSTANCE = new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
@@ -72,7 +72,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     private void setPathToImage() {
     	String currDirectory = System.getProperty("user.dir");
-    	pathToImage = currDirectory + SEPERATE + "src" + SEPERATE + "ui" + SEPERATE + "resources" + SEPERATE + "library.jpg";
+    	pathToImage = currDirectory + SEPARATOR + "src" + SEPARATOR + "ui" + SEPARATOR + "resources" + SEPARATOR + "library.jpg";
     }
     
     private void insertSplashImage() {

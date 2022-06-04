@@ -21,9 +21,9 @@ public class DataAccessFacade implements DataAccess {
 
 	private static final long serialVersionUID = 5399827794066637059L;
 
-	private static final String SEPERATOR = FileSystems.getDefault().getSeparator();
+	private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 	
-	public static final String OUTPUT_DIR = System.getProperty("user.dir") + SEPERATOR + "src" + SEPERATOR + "dataaccess" + SEPERATOR + "storage";
+	public static final String OUTPUT_DIR = System.getProperty("user.dir") + SEPARATOR + "src" + SEPARATOR + "dataaccess" + SEPARATOR + "storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
 	//implement: other save operations
