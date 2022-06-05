@@ -92,6 +92,7 @@ public class MemberWindow extends JFrame implements LibWindow {
                 this.maxID = mid;
             }
             System.out.printf(m.getMemberId() + ":" + m.getFirstName());
+
             contents[i][0] = m.getMemberId();
             contents[i][1] = m.getFirstName();
             contents[i][2] = m.getLastName();

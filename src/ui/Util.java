@@ -190,4 +190,11 @@ public class Util {
 			return true;
 		}
 	}
+
+	public static void resetFields(List<JTextField> list) {
+		for(JTextField field : list) {
+			System.out.println("field:"+field);
+			field.setText("");
+		}
+	}
 }
