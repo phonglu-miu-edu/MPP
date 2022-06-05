@@ -6,15 +6,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import business.ControllerInterface;
 import business.SystemController;
@@ -37,8 +29,8 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	private JPanel lowerPanel;
 	
 	private JTextField id;
-	private JTextField isbn;
-	private JTextField title;
+	private CustomTextField isbn;
+	private CustomTextField title;
 	private JRadioButton check1;
 	private JRadioButton check2;
 	private JList<String> authorList;
@@ -80,21 +72,23 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 		gridPanel.setBorder(new WindowBorder(GuiControl.WINDOW_BORDER));
 
 		//add fields
-		makeLabel(gridPanel, "Book ID");
+		Util.makeLabel(gridPanel, "<html>Book ID<sup color=red>*<sup></html>");
 		id = new JTextField(10);
 		id.setText(String.valueOf(maxID));
 		id.setEnabled(false);
 		gridPanel.add(id);
 
-		makeLabel(gridPanel, "ISBN");
-		isbn = new JTextField(10);
+		Util.makeLabel(gridPanel, "<html>ISBN<sup color=red>*<sup></html>");
+		//isbn = new JTextField(10);
+		isbn = new CustomTextField(10);
 		gridPanel.add(isbn);
 
-		makeLabel(gridPanel, "Title");
-		title = new JTextField(10);
+		Util.makeLabel(gridPanel, "<html>Title<sup color=red>*<sup></html>");
+		//title = new JTextField(10);
+		title = new CustomTextField(10);
 		gridPanel.add(title);
 
-		makeLabel(gridPanel, "Checkout days");	    
+		Util.makeLabel(gridPanel, "Checkout days");
 		check1 = new JRadioButton("7");
 		check2 = new JRadioButton("21");
 		ButtonGroup bg=new ButtonGroup();    
@@ -105,17 +99,22 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	    rButtons.add(check2);
 	    gridPanel.add(rButtons);
 		
-		makeLabel(gridPanel, "Author");
+		Util.makeLabel(gridPanel, "Author");
+
 		TestData td = new TestData();
 		List<Author> authors = td.allAuthors;
-		DefaultListModel<String> l1 = new DefaultListModel<>();  
+		DefaultListModel<String> l1 = new DefaultListModel<>();
 		l1.addElement(authors.get(1).getFirstName() + " " + authors.get(1).getLastName());
 		l1.addElement(authors.get(2).getFirstName() + " " + authors.get(2).getLastName());
 		l1.addElement(authors.get(3).getFirstName() + " " + authors.get(3).getLastName());
+//		String[] l1 = new String[authors.size()];
+//		int i = 0;
 //		for(Author auth: authors) {
-//			l1.addElement(auth.getFirstName() + " " + auth.getLastName());
+//			l1[i] = auth.getFirstName() + " " + auth.getLastName();
+//			i++;
 //		}
-		authorList = new JList<>(l1);
+		authorList = new JList<String>(l1);
+
         gridPanel.add(authorList);
 	}
 	
@@ -132,37 +131,28 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	
 	private void addNewBookButtonListener(JButton butn) {
 		butn.addActionListener(evt -> {
-			TestData td = new TestData();
-			List<Author> list = new ArrayList<>();
-			for(Author au1: td.allAuthors) {
-				for(String name: authorList.getSelectedValuesList()) {
-					if (name.equals(au1.getFirstName() + " " + au1.getLastName())) {
-						list.add(au1);
+			boolean flag1 = Util.validateNumberFormat(isbn, "^([0-9]{3})-([0-9]{3})-([0-9]{4})$", true, "##-#####");
+			boolean flag2 = Util.validateMandatory(title);
+			if(flag1 && flag2) {
+				TestData td = new TestData();
+				List<Author> list = new ArrayList<>();
+				for(Author au1: td.allAuthors) {
+					for(String name: authorList.getSelectedValuesList()) {
+						if (name.equals(au1.getFirstName() + " " + au1.getLastName())) {
+							list.add(au1);
+						}
 					}
 				}
+				System.out.println(list.toString());
+				Book book = new Book(id.getText(), isbn.getText(), title.getText(), (check1.isSelected()?7:21), list);
+				ci.addNewBook(book);
+				LibrarySystem.hideAllWindows();
+				AllBookIdsWindow.INSTANCE.init();
+				//AllBookIdsWindow.INSTANCE.setSize(660,500);
+				Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
+				AllBookIdsWindow.INSTANCE.setVisible(true);
 			}
-			System.out.println(list.toString());
-			Book book = new Book(id.getText(), isbn.getText(), title.getText(), (check1.isSelected()?7:21), list);
-			ci.addNewBook(book);
-			LibrarySystem.hideAllWindows();
-			AllBookIdsWindow.INSTANCE.init();
-			//AllBookIdsWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
-			AllBookIdsWindow.INSTANCE.setVisible(true);
 		});
-	}
-
-	private void makeLabel(JPanel p, String s) {
-		JLabel l = new JLabel(s);
-		p.add(leftPaddedPanel(l));
-	}
-	private JPanel leftPaddedPanel(JLabel label) {
-		JPanel paddedPanel = new JPanel();
-		paddedPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		paddedPanel.add(GuiControl.createHBrick(1));
-		paddedPanel.add(label);
-		paddedPanel.setBackground(GuiControl.SCREEN_BACKGROUND);
-		return paddedPanel;
 	}
 	
 	public void defineLowerPanel() {
