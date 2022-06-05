@@ -3,6 +3,7 @@ package dataaccess;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import entities.Address;
@@ -30,6 +31,8 @@ public class TestData {
 		td.bookData();
 		td.libraryMemberData();
 		td.userData();
+		td.CheckoutRecordrData();
+
 		DataAccess da = new DataAccessFacade();
 		System.out.println(da.readBooksMap());
 		System.out.println(da.readUserMap());
@@ -43,6 +46,11 @@ public class TestData {
 		allBooks.get(2).addCopy();
 		allBooks.get(2).addCopy();
 		DataAccessFacade.loadBookMap(allBooks);
+	}
+
+	public void checkoutRecordData() {
+		//allCheckoutRecords;
+		//DataAccessFacade.loadCheckoutRecordMap();
 	}
 	
 	public void userData() {
@@ -132,6 +140,33 @@ public class TestData {
 			add(new CheckoutRecordEntry(bc4, LocalDate.of(2022,5,31)));
 		}
 	};
+
+	List<CheckoutRecord> allCheckoutRecords = new ArrayList<CheckoutRecord>() {
+		{
+			DataAccess da = new DataAccessFacade();
+			HashMap<String, LibraryMember> members = da.readMemberMap();
+
+			LibraryMember m1 = members.get(0);
+			CheckoutRecord cr1 = new CheckoutRecord(m1);
+			cr1.addEntry(allCheckoutEntries.get(1));
+			cr1.addEntry(allCheckoutEntries.get(3));
+			add(cr1);
+
+			LibraryMember m2 = members.get(1);
+			CheckoutRecord cr2 = new CheckoutRecord(m2);
+			cr2.addEntry(allCheckoutEntries.get(2));
+			add(cr2);
+
+			LibraryMember m3 = members.get(2);
+			CheckoutRecord cr3 = new CheckoutRecord(m3);
+			cr3.addEntry(allCheckoutEntries.get(0));
+			add(cr3);
+		}
+	};
+
+	public void CheckoutRecordrData() {
+		DataAccessFacade.loadCheckoutRecordMap(allCheckoutRecords);
+	}
 
 	private void overdueCheckout() {
 		members.get(2).getCheckoutRecord().addEntry(allCheckoutEntries.get(0));
