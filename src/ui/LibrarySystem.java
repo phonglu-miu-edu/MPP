@@ -130,7 +130,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			AllBookIdsWindow.INSTANCE.init();
 			AllBookIdsWindow.INSTANCE.pack();
 			//AllBookIdsWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
@@ -142,7 +141,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			MemberWindow.INSTANCE.init();
 			MemberWindow.INSTANCE.pack();
 			MemberWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
@@ -154,7 +152,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			CheckoutWindow.INSTANCE.init();
+			CheckoutWindow.INSTANCE.setVisible(true);
 		}
 	}
 
@@ -162,7 +160,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			OverdueWindow.INSTANCE.init();
+			OverdueWindow.INSTANCE.setVisible(true);
 		}
 	}
 
