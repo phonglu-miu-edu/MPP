@@ -6,12 +6,12 @@ import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.List;
 
 import entities.Book;
-import entities.BookCopy;
 import entities.CheckoutRecord;
 import entities.LibraryMember;
 
@@ -37,15 +37,28 @@ public class DataAccessFacade implements DataAccess {
 
 	//implement: other save operations
 	public void saveNewBook(Book book) {
-		HashMap<String, Book> books = readBooksMap();
+		HashMap<String, Book> books = readBookMap();
 		String bookId = book.getId();
 		books.put(bookId, book);
 		System.out.println(books.toString());
 		saveToStorage(StorageType.BOOKS, books);	
 	}
 
+	public void saveCheckoutRecord(CheckoutRecord checkoutRecord) {
+		HashMap<String, CheckoutRecord> checkoutRecords = readCheckoutRecordMap();
+		String id = checkoutRecord.getId();
+
+		if (id.isEmpty()) {
+			long unixTime = Instant.now().getEpochSecond();
+			id = String.valueOf(unixTime);
+		}
+
+		checkoutRecords.put(id, checkoutRecord);
+		saveToStorage(StorageType.CHECKOUT_RECORDS, checkoutRecords);
+	}
+
 	@SuppressWarnings("unchecked")
-	public HashMap<String, Book> readBooksMap() {
+	public HashMap<String, Book> readBookMap() {
 		//Returns a Map with name/value pairs being
 		//   isbn -> Book
 		HashMap<String, Book> books = (HashMap<String, Book>) readFromStorage(StorageType.BOOKS);
@@ -77,7 +90,6 @@ public class DataAccessFacade implements DataAccess {
 		//   userId -> User
 		return (HashMap<String, User>)readFromStorage(StorageType.USERS);
 	}
-	
 	
 	/////load methods - these place test data into the storage area
 	///// - used just once at startup
@@ -176,7 +188,7 @@ public class DataAccessFacade implements DataAccess {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public HashMap<String, CheckoutRecord> readCheckoutMap() {
+	public HashMap<String, CheckoutRecord> readCheckoutRecordMap() {
 		//Returns a Map with name/value pairs being
 		//   isbn -> Book
 		HashMap<String, CheckoutRecord> records = (HashMap<String, CheckoutRecord>) readFromStorage(StorageType.CHECKOUT_RECORDS);

@@ -1,9 +1,10 @@
 package business;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,7 @@ import dataaccess.Auth;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
-import entities.Book;
-import entities.CheckoutRecord;
-import entities.EntityFacade;
-import entities.LibraryMember;
-import entities.Address;
+import entities.*;
 import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
@@ -25,36 +22,6 @@ import ui.Util;
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
 	private DataAccessFacade dataAccessFacade = new DataAccessFacade();
-	
-	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3
-	public static List<String> allWhoseZipContains3() {
-		DataAccess da = new DataAccessFacade();
-		Collection<LibraryMember> members = da.readMemberMap().values();
-		List<LibraryMember> mems = new ArrayList<>();
-		mems.addAll(members);
-		//implement
-		return null;	
-	}
-	
-	//Returns a list of all ids of  LibraryMembers that have an overdue book
-	public static List<String> allHavingOverdueBook() {
-		DataAccess da = new DataAccessFacade();
-		Collection<LibraryMember> members = da.readMemberMap().values();
-		List<LibraryMember> mems = new ArrayList<>();
-		mems.addAll(members);
-		//implement
-		return null;
-	}
-	
-	//Returns a list of all isbns of  Books that have multiple authors
-	public static List<String> allHavingMultipleAuthors() {
-		DataAccess da = new DataAccessFacade();
-		Collection<Book> books = da.readBooksMap().values();
-		List<Book> bs = new ArrayList<>();
-		bs.addAll(books);
-		//implement
-		return null;	
-	}
 	
 	public User login(String id, String password) throws LoginException {
 		DataAccess da = new DataAccessFacade();
@@ -69,6 +36,7 @@ public class SystemController implements ControllerInterface {
 		currentAuth = map.get(id).getAuthorization();
 		return map.get(id);
 	}
+
 	@Override
 	public List<String> allMemberIds() {
 		DataAccess da = new DataAccessFacade();
@@ -93,23 +61,36 @@ public class SystemController implements ControllerInterface {
 	@Override
 	public List<String> allBookIds() {
 		DataAccess da = new DataAccessFacade();
-		List<String> retval = new ArrayList<>();
-		retval.addAll(da.readBooksMap().keySet());
-		return retval;
+		return new ArrayList<>(da.readBookMap().keySet());
 	}
 	
 	@Override
 	public List<Book> allBooks() {
 		DataAccess da = new DataAccessFacade();
-		Collection<Book> books = da.readBooksMap().values();
-
+		Collection<Book> books = da.readBookMap().values();
 		return books.stream().toList();
 	}
 
 	@Override
+	public List<Book> allBooksHasAvailableCopies() {
+		DataAccess da = new DataAccessFacade();
+		Collection<Book> books = da.readBookMap().values();
+
+		List<Book> result = new ArrayList<>();
+
+		for (Book book : books) {
+			int bookCopiesQuantity = book.getNumCopies();
+			if (bookCopiesQuantity > 0) {
+				result.add(book);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
 	public ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels) {
-		return new ResponseModel<CheckoutRecord>();
-		/*ResponseModel<CheckoutRecord> response = new ResponseModel<CheckoutRecord>();
+		ResponseModel<CheckoutRecord> response = new ResponseModel<>();
 		
 		LibraryMember member = getMember(memberId);
 		
@@ -117,65 +98,80 @@ public class SystemController implements ControllerInterface {
 			response.setErrorMessage("Member id '" + memberId + "' not found");
 			return response;
 		}
-		
+
+		CheckoutRecord checkoutRecord = new CheckoutRecord(member);
+
 		for (CheckoutModel checkoutModel : checkoutModels) {
 			String isbnNumber = checkoutModel.getIsbn();
 			int checkoutLength = checkoutModel.getCheckoutLength();
-			
-		Book book = getBook(isbnNumber);
-		
-		if (book == null) {
-			response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
-			return response;
-		}
-		
-		int maxCheckoutLength = book.getMaxCheckoutLength();		
-		if (maxCheckoutLength < checkoutLength) {
-			response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
-			return response;
+
+			Book book = getBook(isbnNumber);
+
+			if (book == null) {
+				response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
+				return response;
+			}
+
+			BookCopy bookCopy = book.getNextAvailableCopy();
+
+			if (bookCopy == null) {
+				response.setErrorMessage("There is no book copy of '" + book.getTitle() + "'");
+				return response;
+			}
+
+			int maxCheckoutLength = book.getMaxCheckoutLength();
+			if (maxCheckoutLength < checkoutLength) {
+				response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
+				return response;
+			}
+
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.DATE, checkoutLength);
+			LocalDate dueDate = LocalDateTime.ofInstant(c.toInstant(), c.getTimeZone().toZoneId()).toLocalDate();
+
+			checkoutRecord.addEntry(new CheckoutRecordEntry(bookCopy, dueDate));
+
+			bookCopy.changeAvailability();
 		}
 
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DATE, checkoutLength);
-		Date dueDate = c.getTime();
+		response.setData(checkoutRecord);
+		dataAccessFacade.saveCheckoutRecord(checkoutRecord);
 		
-		EntityFacade entityFacade = EntityFacade.getInstance();
-		CheckoutRecord checkoutRecord = entityFacade.createCheckoutRecord(memberId);
-		checkoutRecord.addBook(isbnNumber, dueDate);
-			//checkoutRecord.addEntry();
-		
-			response.setData(checkoutRecord);
-		}
-		
-		return response;*/
+		return response;
 	}
-	
+
 	private LibraryMember getMember(String memberId) {
 		HashMap<String, LibraryMember> members = dataAccessFacade.readMemberMap();
-		
+
 		for (Map.Entry<String, LibraryMember> member : members.entrySet()) {
 			LibraryMember found = member.getValue();
-			
+
 			if (found.getMemberId().equals(memberId)) {
 				return found;
 			}
 		}
-		
+
 		return null;
 	}
 
 	private Book getBook(String isbnNumber) {
-		HashMap<String, Book> books = dataAccessFacade.readBooksMap();
-		
+		HashMap<String, Book> books = dataAccessFacade.readBookMap();
+
 		for (Map.Entry<String, Book> book : books.entrySet()) {
 			Book found = book.getValue();
-			
+
 			if (found.getIsbn().equals(isbnNumber)) {
 				return found;
 			}
 		}
-		
+
 		return null;
+	}
+
+	@Override
+	public List<CheckoutRecord> getAllCheckoutRecords() {
+		HashMap<String, CheckoutRecord> checkoutRecords = dataAccessFacade.readCheckoutRecordMap();
+		return new ArrayList<>(checkoutRecords.values());
 	}
 	
 	@Override
@@ -194,7 +190,7 @@ public class SystemController implements ControllerInterface {
 	@Override
 	public List<CheckoutRecord> getCheckoutByMemberId(String memberId) {
 		DataAccess da = new DataAccessFacade();
-		Collection<CheckoutRecord> records = da.readCheckoutMap().values();
+		Collection<CheckoutRecord> records = da.readCheckoutRecordMap().values();
 
 		List<CheckoutRecord> recordsList = records.stream().toList();
 		List<CheckoutRecord> returnValue = new ArrayList<>();
@@ -205,6 +201,7 @@ public class SystemController implements ControllerInterface {
 		}
 		return returnValue;
 	}
+
 	public CheckoutRecord getMemberCheckoutRecord(LibraryMember member) {
 		//need to improve here
 		return new CheckoutRecord(member);

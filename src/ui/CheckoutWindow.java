@@ -16,34 +16,53 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class CheckoutWindow extends JFrame {
-    private static LibraryMember selectedLibraryMember;
+public class CheckoutWindow extends JFrame implements LibWindow {
+    public static final CheckoutWindow INSTANCE = new CheckoutWindow();
     private static Book selectedBook;
     private static TableModel tableModel;
     private final JTextField txtCheckoutLength = new JTextField("1");
     private final JLabel lblMaxCheckoutLengthValue = new JLabel();
     private final List<CheckoutModel> checkoutModels = new ArrayList<>();
+    private boolean isInitialized = false;
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> new CheckoutWindow().setVisible(true));
+        EventQueue.invokeLater(() -> {
+            CheckoutWindow checkoutWindow = new CheckoutWindow();
+            checkoutWindow.init();
+        });
     }
 
-    public CheckoutWindow() {
+    @Override
+    public void init() {
         setBounds(100, 100, 500, 700);
+        setVisible(true);
         setResizable(false);
         Util.centerFrameOnDesktop(this);
-        initialize();
-    }
 
-    private void initialize() {
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         container.add(LoadMembers());
-        container.add(LoadBooks());
+        container.add(LoadBookCopies());
         container.add(LoadCheckoutDate());
         container.add(LoadAddToListButton());
         container.add(LoadCheckoutBooks());
         container.add(LoadCheckoutButton());
+        container.add(LoadStatusBar());
+
+        this.isInitialized = true;
+    }
+
+    @Override
+    public boolean isInitialized(){
+        return this.isInitialized;
+    }
+
+    @Override
+    public void isInitialized(boolean val) {
+        this.isInitialized = val;
+    }
+
+    public CheckoutWindow() {
     }
 
     private Container LoadMembers() {
@@ -64,17 +83,13 @@ public class CheckoutWindow extends JFrame {
         container.add(lblMember);
         container.add(comboBox);
 
-        if (members.size() > 0) {
-            CheckoutWindow.selectedLibraryMember = members.get(0);
-        }
-
         return container;
     }
 
-    private Container LoadBooks() {
+    private Container LoadBookCopies() {
         JLabel lblMember = new JLabel("Books");
 
-        List<Book> books = new SystemController().allBooks();
+        List<Book> books = new SystemController().allBooksHasAvailableCopies();
         Vector model = new Vector();
         for (Book book : books) {
             String id = book.getId();
@@ -156,8 +171,6 @@ public class CheckoutWindow extends JFrame {
     }
 
     private Container LoadCheckoutBooks() {
-        JLabel lblMember = new JLabel("Cart");
-
         List<String> columns = new ArrayList<>();
         columns.add("ISBN");
         columns.add("Title");
@@ -173,8 +186,7 @@ public class CheckoutWindow extends JFrame {
         JScrollPane checkoutBooksScrollPane = new JScrollPane(checkoutBooksTable);
 
         Container container = new Container();
-        container.setLayout(new FlowLayout(FlowLayout.LEFT));
-        container.add(lblMember);
+        container.setLayout(new FlowLayout(FlowLayout.CENTER));
         container.add(checkoutBooksScrollPane);
 
         return container;
@@ -185,7 +197,7 @@ public class CheckoutWindow extends JFrame {
         btnCheckout.addActionListener(e -> {
             // TODO: Auth
             new SystemController().checkout("1", this.checkoutModels);
-            JOptionPane.showMessageDialog(null, this.checkoutModels);
+            JOptionPane.showMessageDialog(null, "Checked out is success");
         });
 
         Container container = new Container();
@@ -202,11 +214,11 @@ public class CheckoutWindow extends JFrame {
         txtCheckoutLength.setColumns(3);
         txtCheckoutLength.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
-                char c = e.getKeyChar();
-                if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
-                    getToolkit().beep();
-                    e.consume();
-                }
+            char c = e.getKeyChar();
+            if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+                getToolkit().beep();
+                e.consume();
+            }
             }
         });
 
@@ -215,6 +227,20 @@ public class CheckoutWindow extends JFrame {
         container.add(lblCheckoutLength);
         container.add(txtCheckoutLength);
         container.add(lblCheckoutDays);
+
+        return container;
+    }
+
+    public Container LoadStatusBar() {
+        JButton backToMainButton = new JButton("<= Back to Main");
+        backToMainButton.addActionListener(e -> {
+            LibrarySystem.hideAllWindows();
+            LibrarySystem.INSTANCE.setVisible(true);
+        });
+
+        Container container = new Container();
+        container.setLayout(new FlowLayout(FlowLayout.LEFT));
+        container.add(backToMainButton);
 
         return container;
     }

@@ -1,31 +1,22 @@
 package ui;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-
 import business.ControllerInterface;
 import business.SystemController;
 import dataaccess.Auth;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serial;
+import java.nio.file.FileSystems;
+
 
 public class LibrarySystem extends JFrame implements LibWindow {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	ControllerInterface ci = new SystemController();
-	private static String SEPARATOR = FileSystems.getDefault().getSeparator();
+	private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 	public final static LibrarySystem INSTANCE = new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
@@ -34,7 +25,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
     String pathToImage;
     private boolean isInitialized = false;
     
-    private static LibWindow[] allWindows = { 
+    private static final LibWindow[] allWindows = {
     	LibrarySystem.INSTANCE,
 		//LoginWindow.INSTANCE,
 		AllMemberIdsWindow.INSTANCE,
@@ -42,6 +33,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		AllBookIdsWindow.INSTANCE,
 		AddNewBookWindow.INSTANCE,
 		CheckoutListWindow.INSTANCE,
+		CheckoutWindow.INSTANCE,
+		OverdueWindow.INSTANCE,
 		AddMemberWindow.INSTANCE
 	};
     	
@@ -59,7 +52,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
     	insertSplashImage();
 		
 		createMenus();
-		//pack();
 		setSize(GuiControl.SCREEN_WIDTH, GuiControl.SCREEN_HEIGHT);
 		isInitialized = true;
     }
@@ -104,11 +96,10 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			if(loginedRole.equals(Auth.BOTH) || loginedRole.equals(Auth.LIBRARIAN)) {
 
 				viewCheckout = new JMenuItem("CHECKOUT");
-				viewCheckout.addActionListener(evt -> {
-					//push checkout Form here
-				});
+				viewCheckout.addActionListener(new CheckoutWindowListener());
 				menus.add(viewCheckout);
 			}
+
 			if(loginedRole.equals(Auth.BOTH) || loginedRole.equals(Auth.ADMIN)) {
 
 				viewBook = new JMenuItem("BOOK");
@@ -122,29 +113,14 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			}
 
 			viewOverdue = new JMenuItem("OVERDUE");
-			viewOverdue.addActionListener(evt -> {
-				//push overdue form here
-			});
+			viewOverdue.addActionListener(new OverdueListener());
 
 			menus.add(viewOverdue);
 			menus.add(logout);
 		}
     }
-    
-    class LoginListener implements ActionListener {
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			LibrarySystem.hideAllWindows();
-			//LoginWindow.INSTANCE.init();
-			//Util.centerFrameOnDesktop(LoginWindow.INSTANCE);
-			//LoginWindow.INSTANCE.setVisible(true);
-			
-		}
-    	
-    }
     class AllBookIdsListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
@@ -153,14 +129,11 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			//AllBookIdsWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
 			AllBookIdsWindow.INSTANCE.setVisible(true);
-			
 		}
-    	
     }
-    
-    class MemberWindowListener implements ActionListener {
 
-    	@Override
+	class MemberWindowListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
 			MemberWindow.INSTANCE.init();
@@ -169,17 +142,31 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
 			MemberWindow.INSTANCE.setVisible(true);
 		}
-    }
+	}
+
+	class CheckoutWindowListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			CheckoutWindow.INSTANCE.init();
+		}
+	}
+
+	class OverdueListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			OverdueWindow.INSTANCE.init();
+		}
+	}
 
 	@Override
 	public boolean isInitialized() {
 		return isInitialized;
 	}
 
-
 	@Override
 	public void isInitialized(boolean val) {
 		isInitialized = val;
 	}
-    
 }

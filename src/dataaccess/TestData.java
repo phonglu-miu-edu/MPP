@@ -34,7 +34,7 @@ public class TestData {
 		td.CheckoutRecordrData();
 
 		DataAccess da = new DataAccessFacade();
-		System.out.println(da.readBooksMap());
+		System.out.println(da.readBookMap());
 		System.out.println(da.readUserMap());
 	}
 	///create books

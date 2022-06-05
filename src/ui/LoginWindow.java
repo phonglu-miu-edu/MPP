@@ -162,7 +162,7 @@ public class LoginWindow extends JFrame implements LibWindow {
 				} else {
 					User loginedUser = ci.login(username, password);
 					setVisible(false);
-					//changeScreen with auth
+					//changeScreen with authss
 					Util.showMainScreen(loginedUser.getAuthorization());
 				}
 			} catch(LoginException ex) {
