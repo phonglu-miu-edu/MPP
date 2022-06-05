@@ -11,14 +11,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 	public static final Color DARK_BLUE = Color.BLUE.darker();
@@ -146,5 +146,48 @@ public class Util {
 		LibrarySystem.INSTANCE.setVisible(false);
 		LoginWindow loginForm = new LoginWindow();
 		loginForm.setVisible(true);
+	}
+
+	public static void makeLabel(JPanel p, String s) {
+		JLabel l = new JLabel(s);
+		p.add(leftPaddedPanel(l));
+	}
+
+	public static JPanel leftPaddedPanel(JLabel label) {
+		JPanel paddedPanel = new JPanel();
+		paddedPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		paddedPanel.add(GuiControl.createHBrick(1));
+		paddedPanel.add(label);
+		paddedPanel.setBackground(GuiControl.SCREEN_BACKGROUND);
+		return paddedPanel;
+	}
+
+	public static boolean validateNumberFormat(JTextField textField, String format, boolean isMandatory, String defaultText) {
+		Pattern pattern = Pattern.compile(format);
+		Matcher matcher = pattern.matcher(textField.getText().trim());
+
+		if(!matcher.matches()) {
+			if(!isMandatory) {
+				if(textField.getText().trim().equals(defaultText)) {
+					textField.setBackground(Color.WHITE);
+					return true;
+				}
+			}
+			textField.setBackground(Color.PINK);
+			return false;
+		} else {
+			textField.setBackground(Color.WHITE);
+			return true;
+		}
+
+	}
+	public static boolean validateMandatory(JTextField textField) {
+		if(textField.getText().trim().equals("")) {
+			textField.setBackground(Color.PINK);
+			return false;
+		} else {
+			textField.setBackground(Color.WHITE);
+			return true;
+		}
 	}
 }

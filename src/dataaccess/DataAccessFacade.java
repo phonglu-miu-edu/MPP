@@ -7,6 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.List;
 
 import entities.Book;
@@ -185,5 +186,16 @@ public class DataAccessFacade implements DataAccess {
 		}
 
 		return records;
+	}
+
+	public boolean findMemberByPhone(String phone) {
+		HashMap<String, LibraryMember> mems = readMemberMap();
+
+		for(Entry<String, LibraryMember> m : mems.entrySet()) {
+			if(m.getValue().getTelephone().equals(phone)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

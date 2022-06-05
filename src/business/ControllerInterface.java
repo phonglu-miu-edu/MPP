@@ -23,4 +23,5 @@ public interface ControllerInterface {
 	public void addCopy(List<Book> books);
 	public List<CheckoutRecord> getCheckoutByMemberId(String memberId);
 	public void addNewLibraryMember(LibraryMember member);
+	boolean addMember(String id, String fname, String lname, String tel, String street, String c, String st, String zip);
 }

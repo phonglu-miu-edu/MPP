@@ -1,8 +1,6 @@
 package ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +13,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import business.ControllerInterface;
 import business.SystemController;
@@ -42,11 +42,13 @@ public class AddMemberWindow extends JFrame implements LibWindow {
     private JTextField id;
     private JTextField firstname;
     private JTextField lastname;
-    private JTextField phone;
+    private CustomTextField phone;
     private JTextField street;
     private JTextField city;
     private JTextField state;
-    private JTextField zip;
+    private CustomTextField zip;
+
+    private JButton addBtn;
 
     private AddMemberWindow() {}
 
@@ -85,40 +87,41 @@ public class AddMemberWindow extends JFrame implements LibWindow {
         gridPanel.setBorder(new WindowBorder(GuiControl.WINDOW_BORDER));
 
         //add fields
-        makeLabel(gridPanel, "Member ID");
+        Util.makeLabel(gridPanel, "<html>Member ID<sup color=red>*<sup></html>");
         id = new JTextField(10);
         id.setText(String.valueOf(maxID));
         id.setEnabled(false);
         gridPanel.add(id);
 
-        makeLabel(gridPanel, "Firstname");
+        Util.makeLabel(gridPanel, "<html>Firstname<sup color=red>*<sup></html>");
         firstname = new JTextField(10);
         gridPanel.add(firstname);
 
-        makeLabel(gridPanel, "Lastname");
+        Util.makeLabel(gridPanel, "<html>Lastname<sup color=red>*<sup></html>");
         lastname = new JTextField(10);
         gridPanel.add(lastname);
 
-        makeLabel(gridPanel, "telephone");
-        phone = new JTextField(10);
+        Util.makeLabel(gridPanel, "<html>telephone<sup color=red>*<sup></html>");
+        phone = new CustomTextField(10);
+        phone.setPlaceholder("###-###-####");
         gridPanel.add(phone);
 
-        makeLabel(gridPanel, "Street");
+        Util.makeLabel(gridPanel, "Street");
         street = new JTextField(10);
         gridPanel.add(street);
 
-        makeLabel(gridPanel, "city");
+        Util.makeLabel(gridPanel, "city");
         city = new JTextField(10);
         gridPanel.add(city);
 
-        makeLabel(gridPanel, "state");
+        Util.makeLabel(gridPanel, "state");
         state = new JTextField(10);
         gridPanel.add(state);
 
-        makeLabel(gridPanel, "zipcode");
-        zip = new JTextField(10);
+        Util.makeLabel(gridPanel, "zipcode");
+        zip = new CustomTextField(10);
+        zip.setPlaceholder("#####");
         gridPanel.add(zip);
-
     }
 	
 	public void defineLowerPanel() {
@@ -130,7 +133,7 @@ public class AddMemberWindow extends JFrame implements LibWindow {
 		lowerPanel.add(backButton);
 		JButton cancelBtn = new JButton("Cancel");
 		cancelButtonListener(cancelBtn);
-		JButton addBtn = new JButton("Add");
+        addBtn = new JButton("Add");
 		addNewMemberButtonListener(addBtn);
 		lowerPanel.add(cancelBtn);
 		lowerPanel.add(addBtn);
@@ -144,17 +147,25 @@ public class AddMemberWindow extends JFrame implements LibWindow {
 		});
 	}
 	
-	private void addNewMemberButtonListener(JButton butn) {
-		butn.addActionListener(evt -> {
-			Address address = new Address(street.getText(), city.getText(), state.getText(), zip.getText());
-			LibraryMember member = new LibraryMember(id.getText(), firstname.getText(), lastname.getText(), 
-					phone.getText(), address);
-			ci.addNewLibraryMember(member);
-			LibrarySystem.hideAllWindows();
-			MemberWindow.INSTANCE.init();
-			//MemberWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
-			MemberWindow.INSTANCE.setVisible(true);
+	private void addNewMemberButtonListener(JButton btn) {
+		btn.addActionListener(evt -> {
+            boolean flag1 = Util.validateMandatory(firstname);
+            boolean flag2 = Util.validateMandatory(lastname);
+
+            boolean flag3 = Util.validateNumberFormat(phone,"^([0-9]{3})-([0-9]{3})-([0-9]{4})$", true, "###-###-####");
+            boolean flag4 = Util.validateNumberFormat(zip,"^[0-9]{5}$", false, "#####");
+            if(flag1 && flag2 && flag3 && flag4) {
+                boolean result = ci.addMember(id.getText(),firstname.getText(),lastname.getText(),phone.getText(),street.getText(), city.getText(),state.getText(), zip.getText());
+                if(!result) {
+                    System.out.println("Can not add a new member because of phone dupplication");
+                }
+
+                LibrarySystem.hideAllWindows();
+                MemberWindow.INSTANCE.init();
+                //MemberWindow.INSTANCE.setSize(660,500);
+                Util.centerFrameOnDesktop(MemberWindow.INSTANCE);
+                MemberWindow.INSTANCE.setVisible(true);
+            }
 		});
 	}
 	
@@ -165,20 +176,6 @@ public class AddMemberWindow extends JFrame implements LibWindow {
 		   LibrarySystem.INSTANCE.setVisible(true);
 	    });
 	}
-
-    private void makeLabel(JPanel p, String s) {
-        JLabel l = new JLabel(s);
-        p.add(leftPaddedPanel(l));
-    }
-
-    private JPanel leftPaddedPanel(JLabel label) {
-        JPanel paddedPanel = new JPanel();
-        paddedPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        paddedPanel.add(GuiControl.createHBrick(1));
-        paddedPanel.add(label);
-        paddedPanel.setBackground(GuiControl.SCREEN_BACKGROUND);
-        return paddedPanel;
-    }
 
     public boolean isInitialized(){
         return isInitialized;

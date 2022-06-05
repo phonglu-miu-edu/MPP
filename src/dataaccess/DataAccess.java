@@ -15,4 +15,5 @@ public interface DataAccess {
 	public void saveNewMember(LibraryMember member); 
 	public void saveNewBook(Book book);
 	public void updateBooks(List<Book> bookList);
+	boolean findMemberByPhone(String phone);
 }

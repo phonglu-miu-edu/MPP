@@ -9,7 +9,5 @@ public interface LibWindow {
 	void isInitialized(boolean val);
 	void setVisible(boolean b);
 
-	//public Window getParentWindow();
-	//public void setParentWindow(Window w);
 }
 

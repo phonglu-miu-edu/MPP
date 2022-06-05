@@ -16,6 +16,7 @@ import entities.Book;
 import entities.CheckoutRecord;
 import entities.EntityFacade;
 import entities.LibraryMember;
+import entities.Address;
 import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
@@ -213,5 +214,24 @@ public class SystemController implements ControllerInterface {
 	public void addNewLibraryMember(LibraryMember member) {
 		DataAccess da = new DataAccessFacade();
 		da.saveNewMember(member);
+	}
+
+	public boolean addMember(String id, String fname, String lname, String tel, String street, String c, String st, String zip) {
+		//search member by phone
+		DataAccess da =  new DataAccessFacade();
+		boolean isExist = da.findMemberByPhone(tel);
+		System.out.println("isExist: "+isExist);
+		if(!isExist) {
+			Address addr = null;
+			if(street.length() > 0 && c.length() > 0 && st.length() > 0 && zip.length() > 0) {
+				addr = new Address(street, c, st, zip);
+			}
+
+			LibraryMember member = new LibraryMember(id, fname, lname, tel, addr);
+			da.saveNewMember(member);
+			return true;
+		}
+
+		return false;
 	}
 }
