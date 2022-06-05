@@ -1,13 +1,13 @@
 package business;
 
-import dataaccess.User;
+import entities.Author;
 import entities.Book;
 import entities.CheckoutRecord;
 import entities.LibraryMember;
+import dataaccess.User;
 import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
-
 import java.util.List;
 
 public interface ControllerInterface {
@@ -20,9 +20,10 @@ public interface ControllerInterface {
 	List<Book> allBooksHasAvailableCopies();
 	ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels);
 	List<CheckoutRecord> getAllCheckoutRecords();
-	void addNewBook(Book book);
-	void addCopy(List<Book> books);
+	void addNewBook(String isbn, String title, int days, List<Author> authors);
+	void addCopy(String isbn);
 	List<CheckoutRecord> getCheckoutByMemberId(String memberId);
 	void addNewLibraryMember(LibraryMember member);
-	boolean addMember(String id, String fname, String lname, String tel, String street, String c, String st, String zip);
+	boolean addMember(String fname, String lname, String tel, String street, String c, String st, String zip);
+	void printCheckoutRecord(String memberId);
 }

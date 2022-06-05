@@ -1,14 +1,13 @@
 package ui;
 import business.ControllerInterface;
 import business.SystemController;
-import entities.Author;
-import entities.Book;
+import dataaccess.Auth;
 import entities.LibraryMember;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MemberWindow extends JFrame implements LibWindow {
@@ -16,22 +15,15 @@ public class MemberWindow extends JFrame implements LibWindow {
     public static final MemberWindow INSTANCE = new MemberWindow();
     private boolean isInitialized = false;
     ControllerInterface ci = new SystemController();
-    private int maxID = 0;
     private JPanel mainPanel;
     private JPanel topPanel;
     private JPanel middlePanel;
     private JPanel lowerPanel;
-    private CustomTableModel model;
 
     private JScrollPane tablePane;
     private JTable table;
-    public static Color DARK_BLUE = Color.blue.darker();
-    public static Color LIGHT_BLUE = new Color(0xf2ffff);
-    public static Color TABLE_HEADER_FOREGROUND = LIGHT_BLUE;
-    public static Color TABLE_HEADER_BACKGROUND = DARK_BLUE;
-
-    private final int TABLE_WIDTH = Math.round(0.75f*Util.SCREEN_WIDTH);
-    private final int DEFAULT_TABLE_HEIGHT = Math.round(0.75f*Util.SCREEN_HEIGHT);
+    DefaultTableModel model;
+    
     public JPanel getMainPanel() {
         return mainPanel;
     }
@@ -47,7 +39,7 @@ public class MemberWindow extends JFrame implements LibWindow {
         mainPanel.add(lowerPanel, BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
         isInitialized = true;
-        setTitle(this.MAIN_LABEL);
+        setTitle(Util.MAIN_LABEL);
     }
 
     public void defineTopPanel() {
@@ -59,8 +51,27 @@ public class MemberWindow extends JFrame implements LibWindow {
     }
     public void defineMiddlePanel() {
         middlePanel = new JPanel();
-        FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 25, 25);
+        FlowLayout fl = new FlowLayout(FlowLayout.CENTER);
         middlePanel.setLayout(fl);
+        String[] columnNames = {"ID", "Firstname", "Lastname", "Telephone", "Address"};
+        model = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		       //all cells false
+		       return false;
+		    }
+		};
+        table = new JTable();
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setModel(model);
+        for(String column: columnNames) {
+        	model.addColumn(column);
+        }
+        tablePane = new JScrollPane();
+        tablePane.setPreferredSize(new Dimension(Util.TABLE_WIDTH, Util.DEFAULT_TABLE_HEIGHT));
+        tablePane.getViewport().add(table);
         generateMemberGrid();
         JPanel tablePanePanel = Util.createStandardTablePanePanel(table, tablePane);
         middlePanel.add(tablePanePanel);
@@ -75,45 +86,36 @@ public class MemberWindow extends JFrame implements LibWindow {
         lowerPanel.add(backButton);
 
         JButton addMember = new JButton("Add Member");
-        //JButton editMember = new JButton("Edit Member");
         addMemberButtonListener(addMember);
         lowerPanel.add(addMember);
-        //lowerPanel.add(editMember);
+        Auth loginedRole = SystemController.currentAuth;
+        if(loginedRole.equals(Auth.BOTH) || loginedRole.equals(Auth.LIBRARIAN)) { 
+			JButton checkout = new JButton("Checkout List");
+			listCheckoutButtonListener(checkout);
+			lowerPanel.add(checkout);
+        }
     }
 
-    private void generateMemberGrid() {
-        List<LibraryMember> data = ci.allMembers();
-        String[] columnNames = {"ID", "Firstname", "Lastname", "Telephone", "Address"};
-        String[][] contents = new String[data.size()][5];
-        int i = 0;
+    public void generateMemberGrid() {
+    	clearTableSelect();
+    	model.setRowCount(0);
+    	List<LibraryMember> data = ci.allMembers();
         for(LibraryMember m: data) {
-            int mid = Integer.parseInt(m.getMemberId());
-            if (mid > this.maxID) {
-                this.maxID = mid;
-            }
-            System.out.printf(m.getMemberId() + ":" + m.getFirstName());
-
-            contents[i][0] = m.getMemberId();
-            contents[i][1] = m.getFirstName();
-            contents[i][2] = m.getLastName();
-            contents[i][3] = m.getTelephone();
-            contents[i][4] = m.getAddress().toString();
-
-            i++;
+        	model.addRow(new Object[] {m.getMemberId(), m.getFirstName(), m.getLastName(), m.getTelephone(), m.getAddress().toString()});
         }
-        table = new JTable(contents, columnNames);
-        tablePane = new JScrollPane();
-        tablePane.setPreferredSize(new Dimension(TABLE_WIDTH, DEFAULT_TABLE_HEIGHT));
-        tablePane.getViewport().add(table);
+        //Util.resizeColumnWidth(table);
+    }
+    
+    public void clearTableSelect() {
+    	table.clearSelection();
     }
 
     private void addMemberButtonListener(JButton btn) {
         btn.addActionListener(evt -> {
             LibrarySystem.hideAllWindows();
-            AddMemberWindow.memberId = maxID+1;
-            AddMemberWindow.INSTANCE.init();
             AddMemberWindow.INSTANCE.setSize(660,500);
             Util.centerFrameOnDesktop(AddMemberWindow.INSTANCE);
+            AddMemberWindow.INSTANCE.resetData();
             AddMemberWindow.INSTANCE.setVisible(true);
         });
     }
@@ -124,6 +126,23 @@ public class MemberWindow extends JFrame implements LibWindow {
             LibrarySystem.INSTANCE.setVisible(true);
         });
     }
+	
+	private void listCheckoutButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			int row = table.getSelectedRow();
+			if (row >= 0) {
+				String id = String.valueOf(table.getValueAt(row, 0));
+				CheckoutListWindow.INSTANCE.setMemberID(id);
+				LibrarySystem.hideAllWindows();
+				Util.centerFrameOnDesktop(CheckoutListWindow.INSTANCE);
+				CheckoutListWindow.INSTANCE.loadTableContent();
+				CheckoutListWindow.INSTANCE.setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(this, "Please select a member", "Information", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+		});
+	}
 
     public boolean isInitialized(){
         return isInitialized;

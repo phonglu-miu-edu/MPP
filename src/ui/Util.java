@@ -1,6 +1,5 @@
 package ui;
 
-import dataaccess.User;
 import dataaccess.Auth;
 import java.awt.Color;
 import java.awt.Component;
@@ -12,22 +11,22 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
+	public static final String MAIN_LABEL = "Library Management System";
 	public static final Color DARK_BLUE = Color.BLUE.darker();
 	public static final Color ERROR_MESSAGE_COLOR = Color.RED.darker(); //dark red
 	public static final Color INFO_MESSAGE_COLOR = new Color(24, 98, 19); //dark green
 	public static final Color LINK_AVAILABLE = DARK_BLUE;
 	public static final Color LINK_NOT_AVAILABLE = Color.gray;
 	public static Color LIGHT_BLUE = new Color(0xf2ffff);
-	
 
 	public static Color TABLE_HEADER_FOREGROUND = LIGHT_BLUE;
 	public static Color TABLE_HEADER_BACKGROUND = DARK_BLUE;
@@ -39,7 +38,10 @@ public class Util {
 
 	public static int SCREEN_WIDTH = 640;
 	public static int SCREEN_HEIGHT = 480;
-	
+
+	public static final int TABLE_WIDTH = Math.round(0.75f*Util.SCREEN_WIDTH);
+    public static final int DEFAULT_TABLE_HEIGHT = Math.round(0.75f*Util.SCREEN_HEIGHT);
+    
 	public static Font makeSmallFont(Font f) {
         return new Font(f.getName(), f.getStyle(), (f.getSize()-2));
     }
@@ -137,7 +139,9 @@ public class Util {
     }
 
 	public static void showMainScreen(Auth auth) {
-		LibrarySystem.INSTANCE.init();
+		//Initialized all windows
+		LibrarySystem.initAllWindows();
+		LibrarySystem.hideAllWindows();
 		Util.centerFrameOnDesktop(LibrarySystem.INSTANCE);
 		LibrarySystem.INSTANCE.setVisible(true);
 	}
@@ -196,5 +200,20 @@ public class Util {
 			System.out.println("field:"+field);
 			field.setText("");
 		}
+	}
+	
+	public static void resizeColumnWidth(JTable table) {
+	    final TableColumnModel columnModel = table.getColumnModel();
+	    for (int column = 0; column < table.getColumnCount(); column++) {
+	        int width = 15; // Min width
+	        for (int row = 0; row < table.getRowCount(); row++) {
+	            TableCellRenderer renderer = table.getCellRenderer(row, column);
+	            Component comp = table.prepareRenderer(renderer, row, column);
+	            width = Math.max(comp.getPreferredSize().width +1 , width);
+	        }
+	        if(width > 300)
+	            width=300;
+	        columnModel.getColumn(column).setPreferredWidth(width);
+	    }
 	}
 }

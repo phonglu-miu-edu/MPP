@@ -175,31 +175,22 @@ public class SystemController implements ControllerInterface {
 	}
 	
 	@Override
-	public void addNewBook(Book book) {
+	public void addNewBook(String isbn, String title, int days, List<Author> authors) {
 		DataAccess da = new DataAccessFacade();
-		da.saveNewBook(book);
+		da.saveNewBook(isbn, title, days, authors);
 	}
 	
 	@Override
-	public void addCopy(List<Book> books) {
+	public void addCopy(String isbn) {
 		DataAccess da = new DataAccessFacade();
-		da.updateBooks(books);
+		da.updateCopyBook(isbn);
 	}
 
 	//Only one CheckoutRecord for each member.
 	@Override
 	public List<CheckoutRecord> getCheckoutByMemberId(String memberId) {
 		DataAccess da = new DataAccessFacade();
-		Collection<CheckoutRecord> records = da.readCheckoutRecordMap().values();
-
-		List<CheckoutRecord> recordsList = records.stream().toList();
-		List<CheckoutRecord> returnValue = new ArrayList<>();
-		for(CheckoutRecord record: recordsList) {
-			/*if (memberId.equals(record.getMemberId())) {
-				returnValue.add(record);
-			}*/
-		}
-		return returnValue;
+		return da.getCheckoutByMemberId(memberId);
 	}
 
 	public CheckoutRecord getMemberCheckoutRecord(LibraryMember member) {
@@ -213,7 +204,7 @@ public class SystemController implements ControllerInterface {
 		da.saveNewMember(member);
 	}
 
-	public boolean addMember(String id, String fname, String lname, String tel, String street, String c, String st, String zip) {
+	public boolean addMember(String fname, String lname, String tel, String street, String c, String st, String zip) {
 		//search member by phone
 		DataAccess da =  new DataAccessFacade();
 		boolean isExist = da.findMemberByPhone(tel);
@@ -223,12 +214,32 @@ public class SystemController implements ControllerInterface {
 			if(street.length() > 0 && c.length() > 0 && st.length() > 0 && zip.length() > 0) {
 				addr = new Address(street, c, st, zip);
 			}
-
+			String id = da.getNewMemberID();
 			LibraryMember member = new LibraryMember(id, fname, lname, tel, addr);
 			da.saveNewMember(member);
 			return true;
 		}
 
 		return false;
+	}
+	
+	@Override
+	public void printCheckoutRecord(String memberId) {
+		DataAccess da = new DataAccessFacade();
+		List<CheckoutRecord> records = da.getCheckoutByMemberId(memberId);
+		System.out.format("%15s%30s%15s%15s%15s", "ISBN", "Book Title", "Copy number", "Checkout Date", "Due Date");
+		System.out.println();
+		for(CheckoutRecord x: records) {
+			for(CheckoutRecordEntry y: x.getEntries()) {
+				System.out.format("%15s%30s%15s%15s%15s",
+						y.getBookCopy().getBook().getIsbn(),
+						y.getBookCopy().getBook().getTitle(),
+						y.getBookCopy().getBook().getNumCopies(),
+						y.getCheckoutDate(),
+						y.getDueDate()
+				);
+				System.out.println();
+			}
+		}
 	}
 }

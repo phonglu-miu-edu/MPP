@@ -1,27 +1,22 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 
 import business.ControllerInterface;
 import business.SystemController;
-import entities.Author;
 import entities.Book;
 
 
@@ -30,25 +25,15 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	public static final AllBookIdsWindow INSTANCE = new AllBookIdsWindow();
     ControllerInterface ci = new SystemController();
     private boolean isInitialized = false;
-    private int maxID = 0;
 	
 	private JPanel mainPanel;
 	private JPanel topPanel;
 	private JPanel middlePanel;
 	private JPanel lowerPanel;
-	private TextArea textArea;
 	
 	private JScrollPane tablePane;
 	private JTable table;
-	
-
-	public static Color DARK_BLUE = Color.blue.darker();
-	public static Color LIGHT_BLUE = new Color(0xf2ffff);
-	public static Color TABLE_HEADER_FOREGROUND = LIGHT_BLUE;
-	public static Color TABLE_HEADER_BACKGROUND = DARK_BLUE;	
-	
-	private final int TABLE_WIDTH = Math.round(0.75f*Util.SCREEN_WIDTH);
-    private final int DEFAULT_TABLE_HEIGHT = Math.round(0.75f*Util.SCREEN_HEIGHT);
+	DefaultTableModel model;
 	
 	//Singleton class
 	private AllBookIdsWindow() {}
@@ -63,8 +48,8 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		mainPanel.add(middlePanel, BorderLayout.CENTER);
 		mainPanel.add(lowerPanel, BorderLayout.SOUTH);
 		getContentPane().add(mainPanel);
+		setTitle(Util.MAIN_LABEL);
 		isInitialized = true;
-		setTitle(this.MAIN_LABEL);
 	}
 	
 	public void defineTopPanel() {
@@ -76,101 +61,55 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 	}
 	
 	public void defineMiddlePanel() {
-		middlePanel = new JPanel();
-		FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 25, 25);
-		middlePanel.setLayout(fl);
-		textArea = new TextArea(8, 20);
-		//create and add table
-		createTableAndTablePane();
-		JPanel tablePanePanel = Util.createStandardTablePanePanel(table,tablePane);
+		model = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
 
-		//populateTextArea();
-		//middlePanel.add(textArea);
-		middlePanel.add(tablePanePanel);
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		       //all cells false
+		       return false;
+		    }
+		};
+		table = new JTable();
+		table.setModel(model);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		//Add columns
+		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors"};
+		for(String column: columnNames) {
+			model.addColumn(column);
+		}
+
+		//load data for a table
+		loadTableContent();
+		
+		tablePane = new JScrollPane();
+		tablePane.setPreferredSize(new Dimension(Util.TABLE_WIDTH, Util.DEFAULT_TABLE_HEIGHT));
+		tablePane.getViewport().add(table);
+		
+		middlePanel = Util.createStandardTablePanePanel(table,tablePane);
+		FlowLayout fl = new FlowLayout(FlowLayout.CENTER);
+		middlePanel.setLayout(fl);
 	}
 	
-	private void copyBookButtonListener(JButton butn) {
-		butn.addActionListener(evt -> {
-			int index = table.getSelectedRow();
-			if (index >= 0) {
-				List<Book> data = ci.allBooks();
-				System.out.println(data.get(index).getNumCopies());
-				data.get(index).addCopy();
-				System.out.println(data.get(index).getNumCopies());
-				ci.addCopy(data);
-				LibrarySystem.hideAllWindows();
-				AllBookIdsWindow.INSTANCE.init();
-				//AllBookIdsWindow.INSTANCE.pack();
-				//AllBookIdsWindow.INSTANCE.setSize(660,500);
-				Util.centerFrameOnDesktop(AllBookIdsWindow.INSTANCE);
-				AllBookIdsWindow.INSTANCE.setVisible(true);	
-			}
-		});
-	}
-	
-	private void addBookButtonListener(JButton butn) {
-		butn.addActionListener(evt -> {
-			LibrarySystem.hideAllWindows();
-			AddNewBookWindow.bookID = maxID+1;
-			AddNewBookWindow.INSTANCE.init();
-			AddNewBookWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
-			AddNewBookWindow.INSTANCE.setVisible(true);	
-		});
-	}
-	
-	private void createTableAndTablePane() {
+	public void loadTableContent() {
+    	clearTableSelect();
+		model.setRowCount(0);
+		
+		//Add content
 		List<Book> data = ci.allBooks();
 		//Collections.sort(data, new Sortbyroll());
-		String[] columnNames = {"ID", "Title", "ISBN", "Copies", "Authors"};
-		String[][] contents = new String[data.size()][7];
-		int i = 0;
 		for(Book x: data) {
-			if (Integer.parseInt(x.getId()) > this.maxID) {
-				this.maxID = Integer.parseInt(x.getId());
-			}
-			String name = "";
-			String com = "";
-			for(Author au: x.getAuthors()) {
-				name += com + au.getFirstName() + " " + au.getLastName();
-				com = ", ";
-			}
-			contents[i][0] = x.getId();
-			contents[i][1] = x.getTitle();
-			contents[i][2] = x.getIsbn();
-			contents[i][3] = String.valueOf(x.getNumCopies());
-			contents[i][4] = name;
-			i++;
+			model.addRow(new Object[] {x.getId(), x.getTitle(), x.getIsbn(), String.valueOf(x.getNumCopies()), x.getAuthorListName()});
 		}
-		table = new JTable(contents, columnNames);
-		resizeColumnWidth(table);
-		tablePane = new JScrollPane();
-		tablePane.setPreferredSize(new Dimension(TABLE_WIDTH, DEFAULT_TABLE_HEIGHT));
-		tablePane.getViewport().add(table);
-		//updateTable();
-	}
-	
-	private void resizeColumnWidth(JTable table) {
-	    final TableColumnModel columnModel = table.getColumnModel();
-	    for (int column = 0; column < table.getColumnCount(); column++) {
-	        int width = 15; // Min width
-	        for (int row = 0; row < table.getRowCount(); row++) {
-	            TableCellRenderer renderer = table.getCellRenderer(row, column);
-	            Component comp = table.prepareRenderer(renderer, row, column);
-	            width = Math.max(comp.getPreferredSize().width +1 , width);
-	        }
-	        if(width > 300)
-	            width=300;
-	        columnModel.getColumn(column).setPreferredWidth(width);
-	    }
+		
+		Util.resizeColumnWidth(table);
 	}
 	
 	public void defineLowerPanel() {
-		
 		JButton backToMainButn = new JButton("<= Back to Main");
-		backToMainButn.addActionListener(new BackToMainListener());
+		backButtonListener(backToMainButn);
 		lowerPanel = new JPanel();
-		lowerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));;
+		lowerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		lowerPanel.add(backToMainButn);
 		JButton addBook = new JButton("Add Book");
 		JButton copyBook = new JButton("Copy Book");
@@ -178,19 +117,6 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 		copyBookButtonListener(copyBook);
 		lowerPanel.add(addBook);
 		lowerPanel.add(copyBook);
-	}
-	
-	class BackToMainListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			LibrarySystem.hideAllWindows();
-			LibrarySystem.INSTANCE.setVisible(true);
-    		
-		}
-	}
-	
-	public void setData(String data) {
-		textArea.setText(data);
 	}
 	
 	@Override
@@ -214,4 +140,40 @@ public class AllBookIdsWindow extends JFrame implements LibWindow {
 //	        return Integer.parseInt(a.getId()) - Integer.parseInt(b.getId());
 //	    }
 //	}
+    
+    public void clearTableSelect() {
+    	table.clearSelection();
+    }
+	
+	private void backButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			LibrarySystem.hideAllWindows();
+			LibrarySystem.INSTANCE.setVisible(true);
+		});
+	}
+	
+	private void copyBookButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			int row = table.getSelectedRow();
+			if (row >= 0) {
+				//get book isbn
+				String isbn = String.valueOf(table.getValueAt(row, 2));
+				ci.addCopy(isbn);
+				//refresh data
+				loadTableContent();
+			} else {
+				JOptionPane.showMessageDialog(this, "Please select a book", "Information", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+	}
+	
+	private void addBookButtonListener(JButton butn) {
+		butn.addActionListener(evt -> {
+			LibrarySystem.hideAllWindows();
+			AddNewBookWindow.INSTANCE.resetFrame();
+			AddNewBookWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(AddNewBookWindow.INSTANCE);
+			AddNewBookWindow.INSTANCE.setVisible(true);	
+		});
+	}
 }

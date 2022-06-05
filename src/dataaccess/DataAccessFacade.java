@@ -7,10 +7,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.List;
 
+import entities.Author;
 import entities.Book;
 import entities.CheckoutRecord;
 import entities.LibraryMember;
@@ -20,8 +22,6 @@ public class DataAccessFacade implements DataAccess {
 		BOOKS, MEMBERS, USERS, CHECKOUT_RECORDS;
 	}
 
-	private static final long serialVersionUID = 5399827794066637059L;
-
 	private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 	
 	public static final String OUTPUT_DIR = System.getProperty("user.dir") + SEPARATOR + "src" + SEPARATOR + "dataaccess" + SEPARATOR + "storage";
@@ -29,19 +29,11 @@ public class DataAccessFacade implements DataAccess {
 	
 	//implement: other save operations
 	public void saveNewMember(LibraryMember member) {
+		System.out.println("Adding new member " + member.getMemberId());
 		HashMap<String, LibraryMember> mems = readMemberMap();
 		String memberId = member.getMemberId();
 		mems.put(memberId, member);
 		saveToStorage(StorageType.MEMBERS, mems);	
-	}
-
-	//implement: other save operations
-	public void saveNewBook(Book book) {
-		HashMap<String, Book> books = readBookMap();
-		String bookId = book.getId();
-		books.put(bookId, book);
-		System.out.println(books.toString());
-		saveToStorage(StorageType.BOOKS, books);	
 	}
 
 	public void saveCheckoutRecord(CheckoutRecord checkoutRecord) {
@@ -153,7 +145,7 @@ public class DataAccessFacade implements DataAccess {
 	
 	
 	static final class Pair<S,T> implements Serializable{
-		
+		private static final long serialVersionUID = 1L;
 		S first;
 		T second;
 		Pair(S s, T t) {
@@ -209,5 +201,83 @@ public class DataAccessFacade implements DataAccess {
 			}
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public HashMap<String, CheckoutRecord> readCheckoutMap() {
+		//Returns a Map with name/value pairs being
+		//   isbn -> Book
+		HashMap<String, CheckoutRecord> records = (HashMap<String, CheckoutRecord>) readFromStorage(StorageType.CHECKOUT_RECORDS);
+
+		if (records == null) {
+			records = new HashMap<String, CheckoutRecord>();
+		}
+
+		return records;
+	}
+
+	@SuppressWarnings("unchecked")
+	public HashMap<String, Book> readBooksMap() {
+		//Returns a Map with name/value pairs being
+		//   isbn -> Book
+		HashMap<String, Book> books = (HashMap<String, Book>) readFromStorage(StorageType.BOOKS);
+
+		if (books == null) {
+			books = new HashMap<String, Book>();
+		}
+
+		return books;
+	}
+	
+	//implement: other save operations
+	public void saveNewBook(String isbn, String title, int days, List<Author> authors) {
+		HashMap<String, Book> books = readBooksMap();
+		//Increase id for a new book
+		int maxID = 0;
+		for(Book book: books.values()) {
+			if (Integer.valueOf(book.getId()) > maxID) {
+				maxID = Integer.valueOf(book.getId());
+			}
+		}
+		maxID++;
+		Book book = new Book(String.valueOf(maxID), isbn, title, days, authors);
+		books.put(isbn, book);
+		System.out.println("A new book with ID is added " + maxID);
+		saveToStorage(StorageType.BOOKS, books);	
+	}
+
+	@Override
+	public void updateCopyBook(String isbn) {
+		HashMap<String, Book> books = readBooksMap();
+		Book book = books.get(isbn);
+		if (book != null) {
+			System.out.println(isbn + " book is added a book copy");
+			book.addCopy();
+			saveToStorage(StorageType.BOOKS, books);
+		}
+	}
+	
+	@Override
+	public String getNewMemberID() {
+		HashMap<String, LibraryMember> mems = readMemberMap();
+		int maxID = 0;
+		for(String id: mems.keySet()) {
+			if (Integer.valueOf(id) > maxID) {
+				maxID = Integer.valueOf(id);
+			}
+		}
+		return String.valueOf(maxID + 1);
+	}
+	
+	@Override
+	public List<CheckoutRecord> getCheckoutByMemberId(String memberID) {
+		HashMap<String, CheckoutRecord> records = readCheckoutMap();
+		List<CheckoutRecord> values = new ArrayList<>();
+		for(CheckoutRecord record: records.values()) {
+			if (record.getMember() != null && memberID.equals(record.getMember().getMemberId())) {
+				values.add(record);
+			}
+		}
+		return values;
 	}
 }

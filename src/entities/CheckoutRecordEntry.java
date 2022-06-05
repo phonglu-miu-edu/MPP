@@ -24,4 +24,8 @@ public final class CheckoutRecordEntry implements Serializable {
 	public LocalDate getDueDate() {
 		return this.dueDate;
 	}
+
+	public LocalDate getCheckoutDate() {
+		return this.checkoutDate;
+	}
 }
