@@ -18,6 +18,7 @@ import java.util.Vector;
 
 public class CheckoutWindow extends JFrame implements LibWindow {
     public static final CheckoutWindow INSTANCE = new CheckoutWindow();
+    private static LibraryMember selectedLibraryMember;
     private static Book selectedBook;
     private static TableModel tableModel;
     private final JTextField txtCheckoutLength = new JTextField("1");
@@ -77,11 +78,31 @@ public class CheckoutWindow extends JFrame implements LibWindow {
         }
 
         JComboBox comboBox = new JComboBox(model);
+        comboBox.addItemListener(e -> {
+            ComboBoxItem item = (ComboBoxItem) e.getItem();
+
+            LibraryMember foundLibraryMember = null;
+
+            for (LibraryMember libraryMember : members) {
+                if (libraryMember.getMemberId().equals(item.getId())) {
+                    foundLibraryMember = libraryMember;
+                    break;
+                }
+            }
+
+            if (foundLibraryMember != null) {
+                CheckoutWindow.selectedLibraryMember = foundLibraryMember;
+            }
+        });
 
         Container container = new Container();
         container.setLayout(new FlowLayout(FlowLayout.LEFT));
         container.add(lblMember);
         container.add(comboBox);
+
+        if (members.size() > 0) {
+            CheckoutWindow.selectedLibraryMember = members.get(0);
+        }
 
         return container;
     }
@@ -195,8 +216,7 @@ public class CheckoutWindow extends JFrame implements LibWindow {
     private Container LoadCheckoutButton() {
         JButton btnCheckout = new JButton("Checkout");
         btnCheckout.addActionListener(e -> {
-            // TODO: Auth
-            new SystemController().checkout("1", this.checkoutModels);
+            new SystemController().checkout(CheckoutWindow.selectedLibraryMember.getMemberId(), this.checkoutModels);
             JOptionPane.showMessageDialog(null, "Checked out is success");
         });
 

@@ -1,8 +1,8 @@
 package entities;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -15,8 +15,11 @@ public final class CheckoutRecord implements Serializable {
 	private List<CheckoutRecordEntry> entries;
 	
 	public CheckoutRecord(LibraryMember member) {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+		this.id = String.valueOf(timestamp.getTime());
 		this.member = member;
-		this.entries = new ArrayList<CheckoutRecordEntry>();
+		this.entries = new ArrayList<>();
 	}
 	
 	public String getId() {

@@ -1,13 +1,9 @@
 package ui;
 
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
-
-import javax.swing.JFrame;
-import ui.LoginWindow;
-import ui.Util;
 import business.SystemController;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class Main {
 	public static void main(String[] args) {
