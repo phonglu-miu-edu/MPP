@@ -6,7 +6,7 @@ public class ResponseModel<T> {
 	private String errorMessage;
 	
 	public ResponseModel() {
-		this.isSuccess = false;
+		this.isSuccess = true;
 	}
 	
 	public void setData(T data) {
@@ -16,5 +16,13 @@ public class ResponseModel<T> {
 	public void setErrorMessage(String errorMessage) {
 		this.isSuccess = false;
 		this.errorMessage = errorMessage;
+	}
+
+	public boolean getIsSuccess() {
+		return this.isSuccess;
+	}
+
+	public String getErrorMessage() {
+		return this.errorMessage;
 	}
 }

@@ -18,7 +18,7 @@ public interface ControllerInterface {
 	List<String> allBookIds();
 	List<Book> allBooks();
 	List<Book> allBooksHasAvailableCopies();
-	ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels);
+	ResponseModel<CheckoutRecord> checkout(String memberId, String bookIsbnNumber);
 	List<CheckoutRecord> getAllCheckoutRecords();
 	void addNewBook(String isbn, String title, int days, List<Author> authors);
 	void addCopy(String isbn);

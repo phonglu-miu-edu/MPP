@@ -14,7 +14,6 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
 import entities.*;
-import models.CheckoutModel;
 import models.LoginException;
 import models.ResponseModel;
 import ui.Util;
@@ -89,7 +88,7 @@ public class SystemController implements ControllerInterface {
 	}
 
 	@Override
-	public ResponseModel<CheckoutRecord> checkout(String memberId, List<CheckoutModel> checkoutModels) {
+	public ResponseModel<CheckoutRecord> checkout(String memberId, String isbnNumber) {
 		ResponseModel<CheckoutRecord> response = new ResponseModel<>();
 		
 		LibraryMember member = getMember(memberId);
@@ -101,42 +100,31 @@ public class SystemController implements ControllerInterface {
 
 		CheckoutRecord checkoutRecord = new CheckoutRecord(member);
 
-		for (CheckoutModel checkoutModel : checkoutModels) {
-			String isbnNumber = checkoutModel.getIsbn();
-			int checkoutLength = checkoutModel.getCheckoutLength();
+		Book book = getBook(isbnNumber);
 
-			Book book = getBook(isbnNumber);
-
-			if (book == null) {
-				response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
-				return response;
-			}
-
-			BookCopy bookCopy = book.getNextAvailableCopy();
-
-			if (bookCopy == null) {
-				response.setErrorMessage("There is no book copy of '" + book.getTitle() + "'");
-				return response;
-			}
-
-			int maxCheckoutLength = book.getMaxCheckoutLength();
-			if (maxCheckoutLength < checkoutLength) {
-				response.setErrorMessage("Book isbn number's max checkout length is '" + maxCheckoutLength + "' day(s)");
-				return response;
-			}
-
-			Calendar c = Calendar.getInstance();
-			c.add(Calendar.DATE, checkoutLength);
-			LocalDate dueDate = LocalDateTime.ofInstant(c.toInstant(), c.getTimeZone().toZoneId()).toLocalDate();
-
-			checkoutRecord.addEntry(new CheckoutRecordEntry(bookCopy, dueDate));
-
-			bookCopy.changeAvailability();
+		if (book == null) {
+			response.setErrorMessage("Book isbn number '" + isbnNumber + "' not found");
+			return response;
 		}
 
+		BookCopy bookCopy = book.getNextAvailableCopy();
+
+		if (bookCopy == null) {
+			response.setErrorMessage("There is no book copy of '" + book.getTitle() + "'");
+			return response;
+		}
+
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, book.getMaxCheckoutLength());
+		LocalDate dueDate = LocalDateTime.ofInstant(c.toInstant(), c.getTimeZone().toZoneId()).toLocalDate();
+
+		checkoutRecord.addEntry(new CheckoutRecordEntry(bookCopy, dueDate));
+
 		response.setData(checkoutRecord);
+
 		dataAccessFacade.saveCheckoutRecord(checkoutRecord);
-		
+		dataAccessFacade.changeBookCopyAvailability(book.getIsbn(), bookCopy.getCopyNum(), false);
+
 		return response;
 	}
 
@@ -183,7 +171,7 @@ public class SystemController implements ControllerInterface {
 	@Override
 	public void addCopy(String isbn) {
 		DataAccess da = new DataAccessFacade();
-		da.updateCopyBook(isbn);
+		da.addBookCopy(isbn);
 	}
 
 	//Only one CheckoutRecord for each member.

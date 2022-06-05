@@ -12,10 +12,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.List;
 
-import entities.Author;
-import entities.Book;
-import entities.CheckoutRecord;
-import entities.LibraryMember;
+import entities.*;
 
 public class DataAccessFacade implements DataAccess {
 	enum StorageType {
@@ -246,8 +243,23 @@ public class DataAccessFacade implements DataAccess {
 		saveToStorage(StorageType.BOOKS, books);	
 	}
 
+	public void changeBookCopyAvailability(String isbn, int bookCopyId, boolean availability) {
+		HashMap<String, Book> books = readBooksMap();
+		Book book = books.get(isbn);
+		if (book != null) {
+			for (BookCopy bookCopy : book.getCopies()) {
+				if (bookCopy.getCopyNum() == bookCopyId) {
+					bookCopy.changeAvailability(availability);
+					break;
+				}
+			}
+
+			saveToStorage(StorageType.BOOKS, books);
+		}
+	}
+
 	@Override
-	public void updateCopyBook(String isbn) {
+	public void addBookCopy(String isbn) {
 		HashMap<String, Book> books = readBooksMap();
 		Book book = books.get(isbn);
 		if (book != null) {

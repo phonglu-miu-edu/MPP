@@ -30,9 +30,13 @@ public final class BookCopy implements Serializable {
 	public Book getBook() {
 		return book;
 	}
-	
+
 	public void changeAvailability() {
 		isAvailable = !isAvailable;
+	}
+
+	public void changeAvailability(boolean val) {
+		isAvailable = val;
 	}
 	
 	@Override

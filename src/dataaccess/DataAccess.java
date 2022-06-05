@@ -17,7 +17,7 @@ public interface DataAccess {
 	public void saveNewBook(String isbn, String title, int days, List<Author> authors);
 	public void updateBooks(List<Book> bookList);
 	boolean findMemberByPhone(String phone);
-	public void updateCopyBook(String isbn);
+	public void addBookCopy(String isbn);
 	public String getNewMemberID();
 	public List<CheckoutRecord> getCheckoutByMemberId(String memberID);
 }
