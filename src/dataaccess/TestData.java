@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import entities.Address;
 import entities.Author;
@@ -145,20 +146,21 @@ public class TestData {
 		{
 			DataAccess da = new DataAccessFacade();
 			HashMap<String, LibraryMember> members = da.readMemberMap();
+			List<LibraryMember> memberList = members.values().stream().toList();
 
-			LibraryMember m1 = members.get(0);
-			CheckoutRecord cr1 = new CheckoutRecord(m1);
+			LibraryMember m1 = memberList.get(0);
+			CheckoutRecord cr1 = new CheckoutRecord("1", m1);
 			cr1.addEntry(allCheckoutEntries.get(1));
 			cr1.addEntry(allCheckoutEntries.get(3));
 			add(cr1);
 
-			LibraryMember m2 = members.get(1);
-			CheckoutRecord cr2 = new CheckoutRecord(m2);
+			LibraryMember m2 = memberList.get(1);
+			CheckoutRecord cr2 = new CheckoutRecord("2", m2);
 			cr2.addEntry(allCheckoutEntries.get(2));
 			add(cr2);
 
-			LibraryMember m3 = members.get(2);
-			CheckoutRecord cr3 = new CheckoutRecord(m3);
+			LibraryMember m3 = memberList.get(2);
+			CheckoutRecord cr3 = new CheckoutRecord("3", m3);
 			cr3.addEntry(allCheckoutEntries.get(0));
 			add(cr3);
 		}

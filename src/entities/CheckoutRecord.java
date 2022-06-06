@@ -1,5 +1,6 @@
 package entities;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -7,17 +8,20 @@ import java.util.List;
 
 
 public final class CheckoutRecord implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -8843171457151271994L;
 
-	private String id;
+	private final String id;
 
 	private LibraryMember member;
 	private List<CheckoutRecordEntry> entries;
-	
-	public CheckoutRecord(LibraryMember member) {
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-		this.id = String.valueOf(timestamp.getTime());
+	public CheckoutRecord(LibraryMember member) {
+		this(String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()), member);
+	}
+
+	public CheckoutRecord(String id, LibraryMember member) {
+		this.id = id;
 		this.member = member;
 		this.entries = new ArrayList<>();
 	}

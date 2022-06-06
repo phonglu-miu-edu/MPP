@@ -4,11 +4,13 @@ import business.SystemController;
 import entities.Book;
 import entities.CheckoutRecord;
 import entities.CheckoutRecordEntry;
+import entities.LibraryMember;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,8 +64,16 @@ public class OverdueWindow extends JFrame implements LibWindow {
         List<String[]> values = new ArrayList<>();
         for (CheckoutRecord checkoutModel : checkoutRecords) {
             for (CheckoutRecordEntry entry : checkoutModel.getEntries()) {
+                String memberId = "";
+                LibraryMember member = checkoutModel.getMember();
+                if (member != null) {
+                    memberId = checkoutModel.getMember().getMemberId();
+                }
+
                 Book book = entry.getBookCopy().getBook();
-                values.add(new String[]{checkoutModel.getId(), book.getTitle(), entry.getDueDate().toString()});
+                if (entry.getDueDate().isBefore(LocalDate.now())) {
+                    values.add(new String[]{memberId, book.getTitle(), entry.getDueDate().toString()});
+                }
             }
         }
 
