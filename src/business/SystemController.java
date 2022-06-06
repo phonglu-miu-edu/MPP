@@ -98,8 +98,6 @@ public class SystemController implements ControllerInterface {
 			return response;
 		}
 
-		CheckoutRecord checkoutRecord = new CheckoutRecord(member);
-
 		Book book = getBook(isbnNumber);
 
 		if (book == null) {
@@ -118,12 +116,13 @@ public class SystemController implements ControllerInterface {
 		c.add(Calendar.DATE, book.getMaxCheckoutLength());
 		LocalDate dueDate = LocalDateTime.ofInstant(c.toInstant(), c.getTimeZone().toZoneId()).toLocalDate();
 
+		CheckoutRecord checkoutRecord = new CheckoutRecord(member);
 		checkoutRecord.addEntry(new CheckoutRecordEntry(bookCopy, dueDate));
 
-		response.setData(checkoutRecord);
-
-		dataAccessFacade.saveCheckoutRecord(checkoutRecord);
 		dataAccessFacade.changeBookCopyAvailability(book.getIsbn(), bookCopy.getCopyNum(), false);
+		dataAccessFacade.saveCheckoutRecord(checkoutRecord);
+
+		response.setData(checkoutRecord);
 
 		return response;
 	}
