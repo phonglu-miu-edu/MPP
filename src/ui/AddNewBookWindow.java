@@ -117,7 +117,7 @@ public class AddNewBookWindow extends JFrame implements LibWindow {
 	
 	private void addNewBookButtonListener(JButton butn) {
 		butn.addActionListener(evt -> {
-			boolean flag1 = true;//Util.validateNumberFormat(isbn, "^([0-9]{2})-([0-9]{5}))$", true, "##-#####");
+			boolean flag1 = Util.validateNumberFormat(isbn, "^([0-9]{2})-([0-9]{5})$", true, "##-#####");
 			boolean flag2 = Util.validateMandatory(title);
 			if(flag1 && flag2) {
 				List<Author> authors = authorList.getSelectedValuesList();
